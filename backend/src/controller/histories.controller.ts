@@ -6,7 +6,7 @@ export class HistoriesController {
   constructor(private historiesService: HistoriesService) {}
 
   @Get()
-  getHistories(): string {
+  getHistories() {
     return this.historiesService.getHistories();
   }
 }
