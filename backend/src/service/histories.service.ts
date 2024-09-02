@@ -4,7 +4,7 @@ import { HistoriesRepository } from 'src/repository/histories.repository';
 @Injectable()
 export class HistoriesService {
   constructor(
-    @Inject('HistoriesRepository')
+    @Inject()
     private historiesRepository: HistoriesRepository,
   ) {}
 
