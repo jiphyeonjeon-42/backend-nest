@@ -1,0 +1,15 @@
+{
+  "name": "backend-nest",
+  "version": "1.0.0",
+  "description": "6차 개발팀은 nestjs 로 새로 작성하기로 했습니다",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "nestjs-zod": "^3.0.0"
+  }
+}
