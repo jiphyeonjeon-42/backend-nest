@@ -6,13 +6,13 @@ export const databaseProviders = [
     useFactory: async () => {
       const dataSource = new DataSource({
         type: 'mysql',
-        host: 'localhost',
+        host: process.env.RDS_HOSTNAME,
         port: 3306,
-        username: 'root',
-        password: 'root',
-        database: 'test',
+        username: process.env.RDS_USERNAME,
+        password: process.env.RDS_PASSWORD,
+        database: process.env.RDS_DB_NAME,
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-        synchronize: true,
+        synchronize: false,
       });
 
       return dataSource.initialize();
