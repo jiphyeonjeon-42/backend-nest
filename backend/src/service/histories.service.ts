@@ -1,9 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { HistoriesRepository } from 'src/repository/histories.repository';
 
 @Injectable()
 export class HistoriesService {
-  constructor() {}
-  getHistories(): string {
-    return 'Histories';
+  constructor(
+    @Inject('HistoriesRepository')
+    private historiesRepository: HistoriesRepository,
+  ) {}
+
+  async getHistories() {
+    return await this.historiesRepository.getHistories();
   }
 }
