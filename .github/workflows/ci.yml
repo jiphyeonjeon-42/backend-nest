@@ -32,7 +32,7 @@ jobs:
           cache-dependency-path: backend/pnpm-lock.yaml
 
       - name: 의존성 설치
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: 테스트
         run: |
