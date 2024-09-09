@@ -1,14 +1,16 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { HistoriesRepository } from 'src/repository/histories.repository';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { VHistories } from 'src/entities';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class HistoriesService {
   constructor(
-    @Inject()
-    private historiesRepository: HistoriesRepository,
+    @InjectRepository(VHistoriesㅣ)
+    private historiesRepository: Repository<VHistories>,
   ) {}
 
   async getHistories() {
-    return await this.historiesRepository.getHistories();
+    return await this.historiesRepository.find();
   }
 }
