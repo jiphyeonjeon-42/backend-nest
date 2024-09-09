@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class HistoriesService {
   constructor(
-    @InjectRepository(VHistoriesㅣ)
+    @InjectRepository(VHistories)
     private historiesRepository: Repository<VHistories>,
   ) {}
 
