@@ -22,7 +22,7 @@ import {
   intSchema,
   limitSchema,
   positiveSchema,
-} from 'src/dto'
+} from 'src/dto';
 
 const lendingIdSchema = intSchema.describe('대출 기록 고유 ID');
 const conditionSchema = extendApi(z.string().describe('도서 상태'), {
