@@ -1,6 +1,6 @@
 import { z } from 'nestjs-zod/z';
 
-export const getHistoriesSchema = z.object({
+export const getHistoriesRequestSchema = z.object({
   who: z
     .enum(['all', 'my'])
     .describe(

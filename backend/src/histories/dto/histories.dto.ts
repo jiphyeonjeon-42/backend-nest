@@ -1,4 +1,4 @@
 import { createZodDto } from 'nestjs-zod';
-import { getHistoriesSchema } from '../schema/histories.schema';
+import { getHistoriesRequestSchema } from '../schema/histories.schema';
 
-export class getHistoriesDto extends createZodDto(getHistoriesSchema) {}
+export class getHistoriesDto extends createZodDto(getHistoriesRequestSchema) {}
