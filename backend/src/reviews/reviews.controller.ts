@@ -1,7 +1,21 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Patch, Post, Put } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { CreateReviewsDto } from 'src/dto/reviews.dto';
-import { HistoriesService } from 'src/service/histories.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Put,
+} from '@nestjs/common';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  CreateReviewsRequestDto,
+  GetReviewsRequestDto,
+  GetReviewsResponseDto,
+} from './dto/reviews.dto';
 
 @Controller('reviews')
 export class ReviewsController {
@@ -9,7 +23,12 @@ export class ReviewsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: '책 리뷰를 작성한다.' })
+  @ApiOperation({
+    summary: '책 리뷰를 작성한다.',
+    description:
+      '책 리뷰를 작성한다. content 길이는 10글자 이상 420글자 이하로 입력하여야 한다.',
+    tags: ['reviews'],
+  })
   @ApiResponse({
     status: 201,
     description: '리뷰가 DB에 정상적으로 insert됨.',
@@ -37,48 +56,21 @@ export class ReviewsController {
       ],
     },
   })
-  createReviews(@Body() createReviewsDto: CreateReviewsDto) {
-
+  createReviews(@Body() createReviewsDto: CreateReviewsRequestDto) {
+  
   }
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: '책 리뷰 10개를 반환한다.' })
+  @ApiOperation({
+    summary: '책 리뷰 10개를 반환한다.',
+    description:
+      '책 리뷰 10개를 반환한다. 최종 페이지의 경우 1 <= n <= 10 개의 값이 반환될 수 있다. content에는 리뷰에 대한 정보를, finalPage 에는 해당 페이지가 마지막인지에 대한 여부를 boolean 값으로 반환한다.',
+    tags: ['reviews'],
+  })
   @ApiResponse({
     status: 200,
     description: '리뷰 목록과 메타데이터를 반환합니다.',
-    schema: {
-      type: 'object',
-      properties: {
-        items: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              reviewsId: { type: 'number' },
-              reviewerId: { type: 'number' },
-              bookInfoId: { type: 'number' },
-              content: { type: 'string' },
-              createdAt: { type: 'string', format: 'date-time' },
-              title: { type: 'string' },
-              nickname: { type: 'string' },
-              intraId: { type: 'string' },
-            },
-          },
-        },
-        meta: {
-          type: 'object',
-          properties: {
-            totalItems: { type: 'number' },
-            itemCount: { type: 'number' },
-            itemsPerPage: { type: 'number' },
-            totalPages: { type: 'number' },
-            currentPage: { type: 'number' },
-            finalPage: { type: 'boolean' },
-          },
-        },
-      },
-    },
   })
   @ApiResponse({
     status: 400,
@@ -107,28 +99,17 @@ export class ReviewsController {
       ],
     },
   })
-  getReviews() {
-
-  }
+  getReviews(@Param() getReviewsRequestDto: GetReviewsRequestDto) {}
 
   @Get('my-reviews')
-  getMyReviews() {
-
-  }
+  getMyReviews() {}
 
   @Put(':reviewsId')
-  putMyReviews() {
-
-  }
+  putMyReviews() {}
 
   @Patch(':reviewsId')
-  PatchMyReviews() {
-
-  }
+  PatchMyReviews() {}
 
   @Delete(':reviewsId')
-  deleteMyReviews() {
-    
-  }
-  
+  deleteMyReviews() {}
 }
