@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -54,6 +54,11 @@ const searchLendingsSchema = z.object({
 });
 class SearchLendingsDto extends createZodDto(searchLendingsSchema) {}
 
+const searchLendingSchema = z.object({
+  lendingId: lendingIdSchema,
+});
+class SearchLendingDto extends createZodDto(searchLendingSchema) {}
+
 @Controller('lendings')
 @ApiTags('lendings')
 export class LendingsController {
@@ -89,4 +94,14 @@ export class LendingsController {
     description: '대출 기록 정보를 반환합니다.',
   })
   searchLendings(@Query() query: SearchLendingsDto) {}
+
+  @Get(':lendingId')
+  @ApiOperation({
+    summary: '특정 대출 기록 조회',
+    description: '특정 대출 기록의 상세 정보를 보여줍니다.',
+  })
+  @ApiOkResponse({
+    description: '대출 기록을 반환합니다.',
+  })
+  getLending(@Param() { lendingId }: SearchLendingDto) {}
 }
