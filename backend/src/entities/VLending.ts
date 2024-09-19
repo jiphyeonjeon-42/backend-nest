@@ -16,7 +16,10 @@ import { DataSource, ViewColumn, ViewEntity } from 'typeorm';
       .addSelect('bi.image', 'image')
       .addSelect("date_format(l.createdAt, '%Y-%m-%d')", 'createdAt')
       .addSelect("date_format(l.returnedAt, '%Y-%m-%d')", 'returnedAt')
-      .addSelect("date_format(DATE_ADD(l.createdAt, INTERVAL 14 DAY), '%Y-%m-%d')", 'dueDate')
+      .addSelect(
+        "date_format(DATE_ADD(l.createdAt, INTERVAL 14 DAY), '%Y-%m-%d')",
+        'dueDate',
+      )
       .from('lending', 'l')
       .innerJoin('user', 'u', 'l.userId = u.id')
       .leftJoin('book', 'b', 'l.bookId = b.id')
