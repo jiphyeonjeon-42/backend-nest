@@ -8,3 +8,13 @@ export const createReviewsSchema = z.object({
 });
 
 export class CreateReviewsDto extends createZodDto(createReviewsSchema) {}
+
+export const getReviewsSchema = z.object({
+	titleOrNickname: z.string(),
+	page: z.coerce.number().optional(),
+	disabled: z.coerce.number(),
+	limit: z.coerce.number().optional(),
+	sort: z.string().optional(), 
+});
+
+export class GetReviewsDto extends createZodDto(getReviewsSchema) {}
