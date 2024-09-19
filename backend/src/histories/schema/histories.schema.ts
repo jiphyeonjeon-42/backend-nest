@@ -1,4 +1,4 @@
-import { z } from 'nestjs-zod/z';
+import { z } from 'zod';
 
 export const getHistoriesRequestSchema = z.object({
   who: z
