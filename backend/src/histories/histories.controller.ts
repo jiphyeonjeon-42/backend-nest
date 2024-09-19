@@ -19,7 +19,7 @@ export class HistoriesController {
     status: 200,
     description: '대출 기록을 반환한다.',
     schema: getHistoriesResponseSchema,
-   })
+  })
   getHistories(@Query() query: getHistoriesDto) {
     return this.historiesService.getHistories();
   }
