@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -59,6 +67,14 @@ const searchLendingSchema = z.object({
 });
 class SearchLendingDto extends createZodDto(searchLendingSchema) {}
 
+const returnLendingSchema = z.object({
+  condition: conditionSchema,
+});
+class ReturnLendingDto extends createZodDto(returnLendingSchema) {}
+class LegacyReturnLendingDto extends createZodDto(
+  searchLendingSchema.merge(returnLendingSchema),
+) {}
+
 @Controller('lendings')
 @ApiTags('lendings')
 export class LendingsController {
@@ -104,4 +120,27 @@ export class LendingsController {
     description: '대출 기록을 반환합니다.',
   })
   getLending(@Param() { lendingId }: SearchLendingDto) {}
+
+  @Patch('return')
+  @ApiOperation({ deprecated: true, summary: '반납 처리' })
+  returnLendingLegacy(
+    @Body() { lendingId, condition }: LegacyReturnLendingDto,
+  ) {
+    return this.returnLending({ lendingId }, { condition });
+  }
+
+  @Patch(':lendingId')
+  @ApiOperation({
+    summary: '반납 처리',
+    description: '대출 레코드에 반납 처리를 합니다.',
+  })
+  @ApiOkResponse({
+    description: '반납처리 완료, 반납된 책이 예약이 되어있는지 알려줍니다.',
+  })
+  returnLending(
+    @Param() { lendingId }: SearchLendingDto,
+    @Body() { condition }: ReturnLendingDto,
+  ) {
+    return { reservedBook: true };
+  }
 }
