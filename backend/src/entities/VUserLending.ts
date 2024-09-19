@@ -8,7 +8,10 @@ import { DataSource, ViewColumn, ViewEntity } from 'typeorm';
       .addSelect('l.lendingCondition', 'lendingCondition')
       .addSelect('bi.id', 'bookInfoId')
       .addSelect('bi.title', 'title')
-      .addSelect("date_format(DATE_ADD(l.createdAt, INTERVAL 14 DAY), '%Y-%m-%d')", 'duedate')
+      .addSelect(
+        "date_format(DATE_ADD(l.createdAt, INTERVAL 14 DAY), '%Y-%m-%d')",
+        'duedate',
+      )
       .addSelect('bi.image', 'image')
       .addSelect(
         'CASE WHEN DATEDIFF(now(), DATE_ADD(l.createdAt, INTERVAL 14 DAY)) < 0 THEN 0 ELSE DATEDIFF(now(), DATE_ADD(l.createdAt, INTERVAL 14 DAY)) END',

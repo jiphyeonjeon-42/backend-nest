@@ -77,6 +77,9 @@ export class BookInfo {
   @OneToMany(() => SuperTag, (superTags) => superTags.userId)
   superTags?: SuperTag[];
 
-  @OneToOne(() => BookInfoSearchKeywords, (bookInfoSearchKeyword) => bookInfoSearchKeyword.bookInfo)
+  @OneToOne(
+    () => BookInfoSearchKeywords,
+    (bookInfoSearchKeyword) => bookInfoSearchKeyword.bookInfo,
+  )
   bookInfoSearchKeyword?: BookInfoSearchKeywords;
 }
