@@ -14,3 +14,24 @@ export const getHistoriesRequestSchema = z.object({
   page: z.number().optional().describe('페이지 번호'),
   limit: z.number().optional().describe('한 페이지에 보여줄 항목 수'),
 });
+
+export const getHistoriesResponseSchema = z.object({
+  items: z.array(
+    z.object({
+      id: z.number().int(),
+      lendingCondition: z.string(),
+      login: z.string(),
+      returningCondition: z.string(),
+      penaltyDays: z.number().int(),
+      callSign: z.string(),
+      title: z.string(),
+      bookInfoId: z.number().int(),
+      createdAt: z.string(),
+    }),
+  ),
+  meta: z.object({
+    total: z.number().int(),
+    page: z.number().int(),
+    limit: z.number().int(),
+  }),
+});
