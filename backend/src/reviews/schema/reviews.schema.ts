@@ -1,4 +1,4 @@
-import { boolean, z } from 'nestjs-zod/z';
+import { z } from "zod";
 
 export const createReviewsRequestSchema = z.object({
   bookInfoId: z.coerce.number().int(),
