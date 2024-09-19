@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import {
@@ -56,7 +57,7 @@ export class ReviewsController {
       ],
     },
   })
-  createReviews(@Body() createReviewsDto: CreateReviewsRequestDto) {
+  async createReviews(@Body() createReviewsDto: CreateReviewsRequestDto) {
   
   }
 
@@ -99,7 +100,7 @@ export class ReviewsController {
       ],
     },
   })
-  getReviews(@Param() getReviewsRequestDto: GetReviewsRequestDto) {}
+  async getReviews(@Query() getReviewsRequestDto: GetReviewsRequestDto) {}
 
   @Get('my-reviews')
   getMyReviews() {}
