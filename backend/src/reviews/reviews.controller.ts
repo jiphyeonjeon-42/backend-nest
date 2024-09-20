@@ -277,18 +277,16 @@ export class ReviewsController {
   @ApiResponse({
     status: 404,
     description: '존재하지 않는 reviewsId.',
-    content:{
-      'application/json':{
-        schema:{
-          type:'object',
-          properties:{
-            errorCode:{type:'integer'},
-          }
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            errorCode: { type: 'integer' },
+          },
         },
-      }
-    }
+      },
+    },
   })
-  async deleteReviews(@Param('reviewsId') reviewsId: number) {
-
-  }
+  async deleteReviews(@Param('reviewsId') reviewsId: number) {}
 }

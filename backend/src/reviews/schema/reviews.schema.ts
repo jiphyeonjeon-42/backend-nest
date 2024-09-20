@@ -79,7 +79,7 @@ export const getMyReviewsResponseSchema = getReviewsResponseSchema;
 
 export const updateReviewsPathSchema = z.object({
   reviewsId: z.string().describe('수정할 reviews ID'),
-})
+});
 
 export const updateReviewsRequestSchema = z.object({
   content: z.string(),
