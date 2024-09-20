@@ -1,8 +1,9 @@
-import { number, z } from 'zod';
+import { extendApi } from '@anatine/zod-openapi';
+import { z } from 'zod';
 
 export const createReviewsRequestSchema = z.object({
-  bookInfoId: z.coerce.number().int(),
-  content: z.string(),
+  bookInfoId: extendApi(z.coerce.number().int(), { example: 42 }),
+  content: extendApi(z.string(), { example: '책이 좋네요 열글자.' }),
 });
 
 export const getReviewsRequestSchema = z.object({
@@ -79,10 +80,10 @@ export const getMyReviewsResponseSchema = getReviewsResponseSchema;
 
 export const updateReviewsPathSchema = z.object({
   reviewsId: z.string().describe('수정할 reviews ID'),
-})
+});
 
 export const updateReviewsRequestSchema = z.object({
-  content: z.string(),
+  content: extendApi(z.string(), { example: '책이 좋네요 열글자.' }),
 });
 
 export const patchReviewsPathSchema = updateReviewsPathSchema;
