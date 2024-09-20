@@ -14,13 +14,10 @@ import {
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   CreateReviewsRequestDto,
-  DeleteReviewsPathDto,
   GetMyReviewsRequestDto,
   GetMyReviewsResponseDto,
   GetReviewsRequestDto,
   GetReviewsResponseDto,
-  PatchReviewsPathDto,
-  UpdateReviewsPathDto,
   UpdateReviewsRequestDto,
 } from './dto/reviews.dto';
 
