@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { number, z } from 'zod';
 
 export const createReviewsRequestSchema = z.object({
   bookInfoId: z.coerce.number().int(),
@@ -33,7 +33,7 @@ export const getReviewsRequestSchema = z.object({
     .describe('asc, desc 값을 통해 시간순으로 정렬된 페이지를 반환한다.'),
 });
 
-const itemSchema = z.object({
+const getReviewsItemSchema = z.object({
   reviewsId: z.coerce.number().int(),
   reviewerId: z.coerce.number().int(),
   bookInfoId: z.coerce.number().int(),
@@ -45,7 +45,7 @@ const itemSchema = z.object({
 });
 
 // Define the schema for the meta object
-const metaSchema = z.object({
+const getReivewsMetaSchema = z.object({
   totalItems: z.coerce.number().int(),
   itemCount: z.coerce.number().int(),
   itemsPerPage: z.coerce.number().int(),
@@ -56,7 +56,35 @@ const metaSchema = z.object({
 
 // Combine both schemas into the main schema
 export const getReviewsResponseSchema = z.object({
-  items: z.array(itemSchema),
-  meta: metaSchema,
+  items: z.array(getReviewsItemSchema),
+  meta: getReivewsMetaSchema,
 });
 
+export const getMyReviewsRequestSchema = z.object({
+  name: z.string().describe('책 제목 또는 닉네임을 검색어로 받는다.'),
+  limit: z
+    .number()
+    .int()
+    .default(10)
+    .optional()
+    .describe(
+      '한 페이지에서 몇 개의 게시글을 가져올 지 결정한다. [default = 10]',
+    ),
+  page: z.number().int().optional().describe('해당하는 페이지를 보여준다.'),
+  sort: z.enum(['asc', 'desc']).optional(),
+  isMyReview: z.boolean().default(false),
+});
+
+export const getMyReviewsResponseSchema = getReviewsResponseSchema;
+
+export const updateReviewsPathSchema = z.object({
+  reviewsId: z.string().describe('수정할 reviews ID'),
+})
+
+export const updateReviewsRequestSchema = z.object({
+  content: z.string(),
+});
+
+export const patchReviewsPathSchema = updateReviewsPathSchema;
+
+export const deleteReviewsPathSchema = updateReviewsPathSchema;
