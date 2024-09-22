@@ -25,6 +25,52 @@ export class UsersController {
   @ApiOperation({
     summary: 'Search users',
     description: '검색할 유저의 nickname or email',
+    deprecated: true,
+    tags: ['users'],
+  })
+  @ApiResponse({
+    status: 200,
+    description: '검색 결과를 반환한다.',
+    type: GetUsersRequestDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: '입력된 인자가 부적절합니다',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            errorCode: {
+              type: 'number',
+              description: '에러코드',
+              example: 200,
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 500,
+    description: '',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            errorCode: { type: 'number', description: '에러코드', example: 1 },
+          },
+        },
+      },
+    },
+  })
+  async getUsersDeprecated(@Query() getUsersRequestDto: GetUsersRequestDto) {}
+  
+  @Get()
+  @ApiOperation({
+    summary: 'Search users',
+    description: '검색할 유저의 nickname or email',
     tags: ['users'],
   })
   @ApiResponse({
@@ -70,6 +116,37 @@ export class UsersController {
   @ApiOperation({
     summary: 'Create users',
     description: '유저를 생성한다.',
+    deprecated: true,
+    tags: ['users'],
+  })
+  @ApiResponse({
+    status: 200,
+    description: '유저 생성 성공!',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Client Error Bad Request',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            errorCode: {
+              type: 'number',
+              description: '에러코드',
+              example: 200,
+            },
+          },
+        },
+      },
+    },
+  })
+  async createUsersDeprecated(@Body() createUsersRequestDto: CreateUsersRequestDto) {}
+  
+  @Post()
+  @ApiOperation({
+    summary: 'Create users',
+    description: '유저를 생성한다.',
     tags: ['users'],
   })
   @ApiResponse({
@@ -99,6 +176,22 @@ export class UsersController {
   @Post('update/:id')
   @ApiOperation({
     description: '유저 정보를 변경한다.',
+    deprecated: true,
+    tags: ['users'],
+  })
+  @ApiResponse({
+    status: 200,
+    description: '유저 정보 수정 성공!',
+    type: UpdateUsersResponseDto,
+  })
+  async updateUsersDeprecated(
+    @Param('id') id: string,
+    @Body() updateUsersRequestDto: UpdateUsersRequestDto,
+  ) {}
+  
+  @Post(':id')
+  @ApiOperation({
+    description: '유저 정보를 변경한다.',
     tags: ['users'],
   })
   @ApiResponse({
@@ -112,6 +205,95 @@ export class UsersController {
   ) {}
 
   @Patch('myupdate')
+  @ApiOperation({
+    description: '내 유저정보를 변경한다.',
+    deprecated: true,
+    tags: ['users'],
+  })
+  @ApiResponse({
+    status: 200,
+    description: '유저 정보 변경 성공!',
+  })
+  @ApiResponse({
+    status: 400,
+    description: '들어온 인자가 없습니다..',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            errorCode: {
+              type: 'number',
+              description: '에러코드',
+              example: 200,
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 403,
+    description: '수정하려는 계정이 본인의 계정이 아닙니다',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          description: 'error description',
+          properties: {
+            errorCode: {
+              type: 'number',
+              description: '에러코드',
+              example: 206,
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 409,
+    description: '수정하려는 값이 중복됩니다',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          description: '203, 204 에러',
+          properties: {
+            errorCode: {
+              type: 'number',
+              description: '에러코드',
+              example: 204,
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Server Error',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          description: 'error description',
+          properties: {
+            errorCode: {
+              type: 'number',
+              description: '에러코드',
+              example: 1,
+            },
+          },
+        },
+      },
+    },
+  })
+  async myUpdateUsersDeprecated(
+    @Body() myUpddateUsersRequestDto: MyUpddateUsersRequestDto,
+  ) {}
+  
+  @Patch('/me')
   @ApiOperation({
     description: '내 유저정보를 변경한다.',
     tags: ['users'],
@@ -199,7 +381,7 @@ export class UsersController {
     @Body() myUpddateUsersRequestDto: MyUpddateUsersRequestDto,
   ) {}
 
-  @Get('EasterEgg')
+  @Get('EasterEgg') // suggesting to change this to 'version'
   @ApiOperation({
     description: '집현전 개발 버전을 확인합니다.',
     tags: ['users'],
