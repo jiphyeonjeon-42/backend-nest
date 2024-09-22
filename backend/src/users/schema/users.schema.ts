@@ -103,9 +103,12 @@ export const getMyUserInfoResponseSchema = z.object({
   overDueDay: extendApi(z.coerce.number().describe('현재 연체된 날수'), {
     example: 0,
   }),
-  reservations: extendApi(z.array(VUserReservations).describe('해당 유저의 예약 정보'), {
-    example: [],
-  }),
+  reservations: extendApi(
+    z.array(VUserReservations).describe('해당 유저의 예약 정보'),
+    {
+      example: [],
+    },
+  ),
   lendings: extendApi(z.array(lending).describe('해당 유저의 대출 정보'), {
     example: [],
   }),

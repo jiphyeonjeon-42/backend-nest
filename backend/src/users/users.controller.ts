@@ -66,7 +66,7 @@ export class UsersController {
     },
   })
   async getUsersDeprecated(@Query() getUsersRequestDto: GetUsersRequestDto) {}
-  
+
   @Get()
   @ApiOperation({
     summary: 'Search users',
@@ -141,8 +141,10 @@ export class UsersController {
       },
     },
   })
-  async createUsersDeprecated(@Body() createUsersRequestDto: CreateUsersRequestDto) {}
-  
+  async createUsersDeprecated(
+    @Body() createUsersRequestDto: CreateUsersRequestDto,
+  ) {}
+
   @Post()
   @ApiOperation({
     summary: 'Create users',
@@ -188,7 +190,7 @@ export class UsersController {
     @Param('id') id: string,
     @Body() updateUsersRequestDto: UpdateUsersRequestDto,
   ) {}
-  
+
   @Post(':id')
   @ApiOperation({
     description: '유저 정보를 변경한다.',
@@ -292,7 +294,7 @@ export class UsersController {
   async myUpdateUsersDeprecated(
     @Body() myUpddateUsersRequestDto: MyUpddateUsersRequestDto,
   ) {}
-  
+
   @Patch('/me')
   @ApiOperation({
     description: '내 유저정보를 변경한다.',
