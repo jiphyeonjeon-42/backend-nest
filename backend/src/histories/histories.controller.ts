@@ -3,6 +3,7 @@ import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { HistoriesService } from 'src/histories/histories.service';
 import { getHistoriesDto } from 'src/histories/dto/histories.dto'; // Adjust the import path as necessary
 import { getHistoriesResponseSchema } from './schema/histories.schema';
+import { zodToOpenAPI } from 'nestjs-zod';
 
 @Controller('histories')
 export class HistoriesController {
@@ -18,7 +19,7 @@ export class HistoriesController {
   @ApiResponse({
     status: 200,
     description: '대출 기록을 반환한다.',
-    schema: getHistoriesResponseSchema,
+    schema: zodToOpenAPI(getHistoriesResponseSchema),
   })
   getHistories(@Query() query: getHistoriesDto) {
     return this.historiesService.getHistories();
