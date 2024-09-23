@@ -30,8 +30,13 @@ export const getHistoriesResponseSchema = z.object({
     }),
   ),
   meta: z.object({
-    total: z.number().int(),
-    page: z.number().int(),
-    limit: z.number().int(),
+    totalItems: z.number().positive().describe('전체 대출 기록 수'),
+    itemCount: z.number().positive().describe('현재 페이지의 대출 기록 수'),
+    itemsPerPage: z
+      .number()
+      .positive()
+      .describe('한 페이지에 보여줄 대출 기록 수'),
+    totalPages: z.number().positive().describe('전체 페이지 수'),
+    currentPage: z.number().positive().describe('현재 페이지 번호'),
   }),
 });
