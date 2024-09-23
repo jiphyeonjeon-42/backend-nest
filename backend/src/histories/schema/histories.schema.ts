@@ -15,28 +15,30 @@ export const getHistoriesRequestSchema = z.object({
   limit: z.number().optional().describe('한 페이지에 보여줄 항목 수'),
 });
 
-export const getHistoriesResponseSchema = z.object({
-  items: z.array(
-    z.object({
-      id: z.number().int(),
-      lendingCondition: z.string(),
-      login: z.string(),
-      returningCondition: z.string(),
-      penaltyDays: z.number().int(),
-      callSign: z.string(),
-      title: z.string(),
-      bookInfoId: z.number().int(),
-      createdAt: z.string(),
+export const getHistoriesResponseSchema = z
+  .object({
+    items: z.array(
+      z.object({
+        id: z.number().int(),
+        lendingCondition: z.string(),
+        login: z.string(),
+        returningCondition: z.string(),
+        penaltyDays: z.number().int(),
+        callSign: z.string(),
+        title: z.string(),
+        bookInfoId: z.number().int(),
+        createdAt: z.string(),
+      }),
+    ),
+    meta: z.object({
+      totalItems: z.number().positive().describe('전체 대출 기록 수'),
+      itemCount: z.number().positive().describe('현재 페이지의 대출 기록 수'),
+      itemsPerPage: z
+        .number()
+        .positive()
+        .describe('한 페이지에 보여줄 대출 기록 수'),
+      totalPages: z.number().positive().describe('전체 페이지 수'),
+      currentPage: z.number().positive().describe('현재 페이지 번호'),
     }),
-  ),
-  meta: z.object({
-    totalItems: z.number().positive().describe('전체 대출 기록 수'),
-    itemCount: z.number().positive().describe('현재 페이지의 대출 기록 수'),
-    itemsPerPage: z
-      .number()
-      .positive()
-      .describe('한 페이지에 보여줄 대출 기록 수'),
-    totalPages: z.number().positive().describe('전체 페이지 수'),
-    currentPage: z.number().positive().describe('현재 페이지 번호'),
-  }),
-});
+  })
+  .describe('대출 기록 조회 응답');
