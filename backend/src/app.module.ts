@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm'; // Add this line
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { HistoriesModule } from './repository/module/histories.module';
+import { HistoriesModule } from './histories/histories.module';
 
 import * as dotenv from 'dotenv';
 dotenv.config();
