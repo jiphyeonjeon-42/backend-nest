@@ -1,3 +1,4 @@
+import { createZodDto } from '@anatine/zod-nestjs';
 import { z } from 'zod';
 
 export const getHistoriesRequestSchema = z.object({
@@ -42,3 +43,4 @@ export const getHistoriesResponseSchema = z
     }),
   })
   .describe('대출 기록 조회 응답');
+export const HistoriesResponseDto = createZodDto(getHistoriesResponseSchema);
