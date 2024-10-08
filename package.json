@@ -4,7 +4,7 @@
   "description": "6차 개발팀은 nestjs 로 새로 작성하기로 했습니다",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "docker compose -f compose-dev.yml up --remove-orphans"
   },
   "keywords": [],
   "author": "",
