@@ -41,7 +41,7 @@ export class UsersService {
     id: number,
     includes: string[] | null | undefined,
   ): Promise<GetUserResponseDto | null> {
-    let userResponseDto: GetUserResponseDto = new GetUserResponseDto();
+    const userResponseDto: GetUserResponseDto = new GetUserResponseDto();
     const user = await this.usersRepository.findOne({ where: { id } });
     if (!user) return null;
 
@@ -79,10 +79,10 @@ export class UsersService {
       take: limit,
       skip: (page - 1) * limit,
     });
-    let responseDto: GetUserResponseDto[] = [];
+    const responseDto: GetUserResponseDto[] = [];
     const userIds = users.map((user) => user.id);
     users.forEach((user) => {
-      let userDto = new GetUserResponseDto();
+      const userDto = new GetUserResponseDto();
       Object.assign(userDto, user);
       responseDto.push(userDto);
     });

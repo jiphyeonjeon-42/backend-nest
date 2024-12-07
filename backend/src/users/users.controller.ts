@@ -508,6 +508,4 @@ export class UsersController {
       requestQuery.limit,
     );
   }
-
-  
 }
