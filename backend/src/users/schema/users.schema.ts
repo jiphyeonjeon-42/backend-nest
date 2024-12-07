@@ -74,12 +74,7 @@ const VUserReservations = z.object({
 
 export const getUsersResponseInnerSchema = z
   .object({
-    overDueDay: z.coerce
-      .number()
-      .int()
-      .optional()
-      .nullable()
-      .describe('현재 연체된 날수'),
+    overDueDay: z.coerce.number().int().optional().describe('현재 연체된 날수'),
     reservations: z
       .array(VUserReservations)
       .optional()

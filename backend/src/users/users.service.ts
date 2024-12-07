@@ -84,7 +84,6 @@ export class UsersService {
     users.forEach((user) => {
       let userDto = new GetUserResponseDto();
       Object.assign(userDto, user);
-      userDto.overDueDay = null;
       responseDto.push(userDto);
     });
     if (!include) {
@@ -92,11 +91,9 @@ export class UsersService {
     }
     if (isStringInArrayCaseInsensitive(getUserIncludes.Lendings, include)) {
       const lendings = await this.getUserLendings(userIds);
-      // console.dir(lendings, { depth: null });
       const lendingMap = this.mapUserIdItemsToUsers(users, lendings);
       responseDto.map((userDto) => {
         userDto.lendings = lendingMap[userDto.id] || []; // Add user's lendings or empty array if none
-        // console.log(lendingMap[userDto.id]);
         userDto.overDueDay = this.getOverDueDay(userDto.lendings);
       });
     }
