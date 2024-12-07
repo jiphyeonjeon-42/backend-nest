@@ -11,6 +11,7 @@ import { Book } from './Book';
 import { User } from './User';
 import { Lending } from './Lending';
 import { Reservation } from './Reservation';
+import { BookStatus } from 'src/books/constants';
 
 @Index('FK_donator_id_from_user', ['donatorId'], {})
 @Entity('book')
@@ -25,7 +26,7 @@ export class BookCopy {
   callSign: string;
 
   @Column('int', { name: 'status' })
-  status: number;
+  status: BookStatus;
 
   @Column('datetime', {
     name: 'createdAt',
