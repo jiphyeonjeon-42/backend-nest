@@ -20,40 +20,40 @@ import { BookInfoSearchKeywords } from './BookInfoSearchKeywords';
 @Entity('book_info')
 export class Book {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
-  id?: number;
+  id: number;
 
   @Column('varchar', { name: 'title', length: 255 })
-  title?: string;
+  title: string;
 
   @Column('varchar', { name: 'author', length: 255 })
-  author?: string;
+  author: string;
 
   @Column('varchar', { name: 'publisher', length: 255 })
-  publisher?: string;
+  publisher: string;
 
   @Column('varchar', { name: 'isbn', nullable: true, length: 255 })
-  isbn?: string | null;
+  isbn: string;
 
   @Column('varchar', { name: 'image', nullable: true, length: 255 })
-  image?: string | null;
+  image: string | null;
 
   @Column('date', { name: 'publishedAt', nullable: true })
-  publishedAt?: string | null;
+  publishedAt: Date | null;
 
   @Column('datetime', {
     name: 'createdAt',
     default: () => "'CURRENT_TIMESTAMP(6)'",
   })
-  createdAt?: Date;
+  createdAt: Date;
 
   @Column('datetime', {
     name: 'updatedAt',
     default: () => "'CURRENT_TIMESTAMP(6)'",
   })
-  updatedAt?: Date;
+  updatedAt: Date;
 
   @Column('int', { name: 'categoryId' })
-  categoryId?: number;
+  categoryId: number;
 
   @OneToMany(() => BookCopy, (book) => book.info)
   books?: BookCopy[];
@@ -63,7 +63,7 @@ export class Book {
     onUpdate: 'NO ACTION',
   })
   @JoinColumn([{ name: 'categoryId', referencedColumnName: 'id' }])
-  category?: Category;
+  category: Category;
 
   @OneToMany(() => Likes, (likes) => likes.bookInfo)
   likes?: Likes[];
