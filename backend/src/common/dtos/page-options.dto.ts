@@ -23,7 +23,9 @@ const paginationOptionsSchema = z.object({
   }),
 });
 
-export class PaginationOptionsDto extends createZodDto(paginationOptionsSchema) {
+export class PaginationOptionsDto extends createZodDto(
+  paginationOptionsSchema,
+) {
   get skip(): number {
     return (this.page - 1) * this.take;
   }

@@ -109,7 +109,9 @@ export class BooksController {
     description: '도서 복본 목록 조회 성공',
     type: BookCopySearchResponseDto,
   })
-  async findCopies(@Param('id') id: number): Promise<BookCopySearchResponseDto> {
+  async findCopies(
+    @Param('id') id: number,
+  ): Promise<BookCopySearchResponseDto> {
     return this.booksService.findCopies(id);
   }
 
