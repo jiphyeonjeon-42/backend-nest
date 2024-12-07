@@ -37,7 +37,7 @@ export class UsersService {
    * @param includes optional data to include [lendings, reservations]
    * @returns if user found, return GetUserResponseDto, else return null
    */
-  async getUserWithOptionalData(
+  async findOne(
     id: number,
     includes: string[] | null | undefined,
   ): Promise<GetUserResponseDto | null> {
