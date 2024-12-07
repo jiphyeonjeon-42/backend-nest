@@ -4,9 +4,11 @@ services:
     image: mysql:8.0
     environment:
       - TZ=Asia/Seoul
-
     ports:
       - 3306:3306
+
+    volumes:
+      - mysql_data:/var/lib/mysql
 
     env_file: .env
 
@@ -26,3 +28,6 @@ services:
     environment:
       - MYSQL_HOST=database
     env_file: .env
+
+volumes:
+  mysql_data:
