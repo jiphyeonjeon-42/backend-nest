@@ -443,7 +443,7 @@ export class UsersController {
     name: 'include',
     required: false,
     description:
-      'List of related data to include (e.g., lendings, reservations)',
+      'lendings 와 reservations 정보를 가져올지 여부를 결정합니다. (e.g., lendings, reservations) lendings 를 가져올시 overDueDay 를 계산하여 반환합니다.',
     enum: UserInclude, // This validates the query against the enum
     isArray: true, // Indicates the query can be passed multiple times
     example: ['lendings', 'reservations'],
@@ -481,7 +481,7 @@ export class UsersController {
     name: 'include',
     required: false,
     description:
-      'List of related data to include (e.g., lendings, reservations)',
+      'lendings 와 reservations 정보를 가져올지 여부를 결정합니다. (e.g., lendings, reservations) lendings 를 가져올시 overDueDay 를 계산하여 반환합니다.',
     enum: UserInclude, // This validates the query against the enum
     isArray: true, // Indicates the query can be passed multiple times
     example: ['lendings', 'reservations'],
@@ -508,4 +508,6 @@ export class UsersController {
       requestQuery.limit,
     );
   }
+
+  
 }
