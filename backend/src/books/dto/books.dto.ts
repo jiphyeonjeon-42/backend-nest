@@ -3,6 +3,7 @@ import { createZodDto } from '@anatine/zod-nestjs';
 import { extendApi } from '@anatine/zod-openapi';
 import { createPageSchema } from 'src/common/dtos/page.dto';
 import { metaSchema } from 'src/common/dtos/meta.dto';
+import { intSchema } from 'src/dto';
 
 const imageSchema = extendApi(z.string().url().optional(), {
   description: '도서 표지 이미지 URL',
@@ -15,11 +16,11 @@ const isbnSchema = extendApi(z.string(), {
 
 const categoryCountSchema = z.object({
   name: extendApi(z.string(), { description: '카테고리 이름' }),
-  count: extendApi(z.number().int(), { description: '카테고리 내 도서 수' }),
+  count: extendApi(intSchema, { description: '카테고리 내 도서 수' }),
 });
 
 const bookSchema = z.object({
-  id: extendApi(z.number().int(), { description: '도서 ID' }),
+  id: extendApi(intSchema, { description: '도서 ID' }),
   title: extendApi(z.string(), { description: '도서 제목' }),
   author: extendApi(z.string(), { description: '저자' }),
   publisher: extendApi(z.string(), { description: '출판사' }),
@@ -31,12 +32,12 @@ const bookSchema = z.object({
 });
 
 const categorySchema = z.object({
-  id: extendApi(z.number().int(), { description: '카테고리 ID' }),
+  id: extendApi(intSchema, { description: '카테고리 ID' }),
   name: extendApi(z.string(), { description: '카테고리 이름' }),
 });
 
 const bookCopySchema = z.object({
-  id: extendApi(z.number().int(), { description: '도서 복본 ID' }),
+  id: extendApi(intSchema, { description: '도서 복본 ID' }),
   callSign: extendApi(z.string(), { description: '청구기호' }),
   donator: extendApi(z.string().nullable(), { description: '기증자' }),
   status: extendApi(z.string(), { description: '도서 상태' }),

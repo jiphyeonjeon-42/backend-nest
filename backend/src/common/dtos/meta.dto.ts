@@ -1,27 +1,28 @@
 import { z } from 'zod';
 import { createZodDto } from '@anatine/zod-nestjs';
 import { extendApi } from '@anatine/zod-openapi';
+import { intSchema } from 'src/dto';
 
 export const metaSchema = z.object({
-  totalItems: extendApi(z.number().int(), {
+  totalItems: extendApi(intSchema, {
     description: '전체 항목 수',
-    example: 100
+    example: 100,
   }),
-  itemCount: extendApi(z.number().int(), {
+  itemCount: extendApi(intSchema, {
     description: '현재 페이지의 항목 수',
-    example: 10
+    example: 10,
   }),
-  itemsPerPage: extendApi(z.number().int(), {
+  itemsPerPage: extendApi(intSchema, {
     description: '페이지당 항목 수',
-    example: 10
+    example: 10,
   }),
-  totalPages: extendApi(z.number().int(), {
+  totalPages: extendApi(intSchema, {
     description: '전체 페이지 수',
-    example: 10
+    example: 10,
   }),
-  currentPage: extendApi(z.number().int(), {
+  currentPage: extendApi(intSchema, {
     description: '현재 페이지 번호',
-    example: 1
+    example: 1,
   }),
 });
 

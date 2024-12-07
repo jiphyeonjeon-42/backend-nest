@@ -1,4 +1,5 @@
 import { extendApi } from '@anatine/zod-openapi';
+import { intSchema } from 'src/dto';
 import { z } from 'zod';
 
 export const createReviewsRequestSchema = z.object({
@@ -71,7 +72,7 @@ export const getMyReviewsRequestSchema = z.object({
     .describe(
       '한 페이지에서 몇 개의 게시글을 가져올 지 결정한다. [default = 10]',
     ),
-  page: z.number().int().optional().describe('해당하는 페이지를 보여준다.'),
+  page: intSchema.optional().describe('해당하는 페이지를 보여준다.'),
   sort: z.enum(['asc', 'desc']).optional(),
   isMyReview: z.boolean().default(false),
 });
