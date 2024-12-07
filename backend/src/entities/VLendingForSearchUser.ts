@@ -51,7 +51,7 @@ export class VLendingForSearchUser {
   duedate: Date;
 
   @ViewColumn()
-  overDueDay: Date;
+  overDueDay: number;
 
   @ViewColumn()
   reservedNum: number;

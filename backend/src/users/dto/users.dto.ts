@@ -4,12 +4,19 @@ import {
   getAPIVersionResponseSchema,
   getMyUserInfoResponseSchema,
   getUsersRequestSchema,
+  getUsersResponseInnerSchema,
   getUsersResponseSchema,
   myUpdateUsersRequestSchema,
   updateUsersParamSchema,
   updateUsersRequestSchema,
   updateUsersResponseSchema,
 } from '../schema/users.schema';
+
+// export class GetUserRequestDto extends createZodDto(updateUsersParamSchema) {}
+
+export class GetUserResponseDto extends createZodDto(
+  getUsersResponseInnerSchema,
+) {}
 
 export class GetUsersRequestDto extends createZodDto(getUsersRequestSchema) {}
 

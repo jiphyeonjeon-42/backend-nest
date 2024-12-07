@@ -1,27 +1,62 @@
 import { extendApi } from '@anatine/zod-openapi';
+import { paginationRequestSchema } from 'src/common/schema/schema';
+import { zCoercedEnum } from 'src/common/utils/utils';
 import { z } from 'zod';
 
-export const getUsersRequestSchema = z.object({
-  nicknameOrEmail: z.string().describe('검색할 유저의 nickname or email'),
-  page: z.coerce.number().int().describe('페이지').min(1),
-  limit: z.coerce
-    .number()
-    .int()
-    .describe(' 한 페이지에 들어올 검색결과 수 ')
-    .min(1),
-  id: z.coerce.number().int().describe('유저의 id').min(0),
+const getUserSearchSchema = z.object({
+  search: z.string().optional().describe('검색할 유저의 nickname or email'),
 });
 
-const lending = z.object({
-  userId: z.coerce.number(),
-  bookInfoId: z.coerce.number(),
+export enum UserInclude {
+  LENDINGS = 'lendings',
+  RESERVATIONS = 'reservations',
+}
+
+export const getUserRequestSchema = z.object({
+  include: z
+    .preprocess(
+      (value) => {
+        const arrayValue = Array.isArray(value) ? value : value ? [value] : [];
+        return arrayValue.map((item) =>
+          typeof item === 'string' ? item.toLowerCase() : item,
+        );
+      },
+      z.array(z.enum([UserInclude.LENDINGS, UserInclude.RESERVATIONS])),
+    )
+    .optional()
+    .nullable()
+    .describe('포함할 데이터'),
+});
+
+export const getUsersRequestSchema = getUserSearchSchema
+  .merge(paginationRequestSchema)
+  .merge(getUserRequestSchema);
+
+const user = z.object({
+  id: z.coerce.number().int().describe('유저 번호').min(0),
+  email: z.string().describe('이메일'),
+  nickname: z.string().describe('닉네임').nullable(),
+  intraId: z.coerce
+    .number()
+    .int()
+    .describe('인트라 고유 번호')
+    .min(0)
+    .nullable(),
+  slack: z.string().describe('slack 멤버 Id').nullable(),
+  penaltyEndDate: z.date().describe('패널티 끝나는 날짜'),
+  role: z.coerce.number().int().describe('권한'),
+});
+
+const VlendingForSearchUser = z.object({
+  userId: z.coerce.number().int(),
+  bookInfoId: z.coerce.number().int(),
   lendDate: z.coerce.date(),
   lendingCondition: z.string(),
-  image: z.string(),
-  author: z.string(),
-  title: z.string(),
+  image: z.string().url('이미지 URL이 아닙니다.'),
+  author: z.string().min(1),
+  title: z.string().min(1),
   duedate: z.coerce.date(),
-  overDueDay: z.coerce.number(),
+  overDueDay: z.coerce.number().int().min(0).describe('연체된 날수'),
   reservedNum: z.coerce.number().min(0),
 });
 
@@ -37,18 +72,24 @@ const VUserReservations = z.object({
   userId: z.coerce.number().min(0),
 });
 
-const getUsersResponseInnerSchema = z.object({
-  id: z.coerce.number().int().describe('유저 번호').min(0),
-  email: z.string().describe('이메일'),
-  nickname: z.string().describe('닉네임'),
-  intraId: z.coerce.number().int().describe('인트라 고유 번호').min(0),
-  slack: z.string().describe('slack 멤버 Id'),
-  penaltyEndDate: z.string().describe('패널티 끝나는 날짜'),
-  overDueDay: z.coerce.number().describe('현재 연체된 날수').min(0),
-  role: z.coerce.number().int().describe('권한'),
-  reservations: z.array(VUserReservations).describe('해당 유저의 예약 정보'),
-  lendings: z.array(lending).describe('해당 유저의 대출 정보'),
-});
+export const getUsersResponseInnerSchema = z
+  .object({
+    overDueDay: z.coerce
+      .number()
+      .int()
+      .optional()
+      .nullable()
+      .describe('현재 연체된 날수'),
+    reservations: z
+      .array(VUserReservations)
+      .optional()
+      .describe('해당 유저의 예약 정보'),
+    lendings: z
+      .array(VlendingForSearchUser)
+      .optional()
+      .describe('해당 유저의 대출 정보'),
+  })
+  .merge(user);
 
 const getUsersResponseMetaSchema = z.object({
   totalItems: z.coerce.number().int().describe('전체 검색 결과 수'),
@@ -58,10 +99,12 @@ const getUsersResponseMetaSchema = z.object({
   currentPage: z.coerce.number().int().describe('현재 페이지'),
 });
 
-export const getUsersResponseSchema = z.object({
-  items: z.array(getUsersResponseInnerSchema).describe('유저 정보 목록'),
-  meta: getUsersResponseMetaSchema.describe('유저 수와 관련된 정보'),
-});
+export const getUsersResponseSchema = z
+  .array(getUsersResponseInnerSchema)
+  .default([])
+  .describe('유저 정보 목록');
+
+export const getUsersResponseArraySchema = z.array(getUsersResponseInnerSchema);
 
 export const createUsersRequestSchema = z.object({
   email: z.string().describe('이메일'),
@@ -109,7 +152,10 @@ export const getMyUserInfoResponseSchema = z.object({
       example: [],
     },
   ),
-  lendings: extendApi(z.array(lending).describe('해당 유저의 대출 정보'), {
-    example: [],
-  }),
+  lendings: extendApi(
+    z.array(VlendingForSearchUser).describe('해당 유저의 대출 정보'),
+    {
+      example: [],
+    },
+  ),
 });
