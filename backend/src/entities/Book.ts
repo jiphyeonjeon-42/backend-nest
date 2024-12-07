@@ -5,27 +5,40 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { BookInfo } from './BookInfo';
-import { User } from './User';
-import { Lending } from './Lending';
+import { BookCopy } from './BookCopy';
+import { Category } from './Category';
+import { Likes } from './Likes';
 import { Reservation } from './Reservation';
+import { Reviews } from './Reviews';
+import { SuperTag } from './SuperTag';
+import { BookInfoSearchKeywords } from './BookInfoSearchKeywords';
 
-@Index('FK_donator_id_from_user', ['donatorId'], {})
-@Entity('book')
+@Index('categoryId', ['categoryId'], {})
+@Entity('book_info')
 export class Book {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id?: number;
 
-  @Column('varchar', { name: 'donator', nullable: true, length: 255 })
-  donator: string | null;
+  @Column('varchar', { name: 'title', length: 255 })
+  title?: string;
 
-  @Column('varchar', { name: 'callSign', length: 255 })
-  callSign: string;
+  @Column('varchar', { name: 'author', length: 255 })
+  author?: string;
 
-  @Column('int', { name: 'status' })
-  status: number;
+  @Column('varchar', { name: 'publisher', length: 255 })
+  publisher?: string;
+
+  @Column('varchar', { name: 'isbn', nullable: true, length: 255 })
+  isbn?: string | null;
+
+  @Column('varchar', { name: 'image', nullable: true, length: 255 })
+  image?: string | null;
+
+  @Column('date', { name: 'publishedAt', nullable: true })
+  publishedAt?: string | null;
 
   @Column('datetime', {
     name: 'createdAt',
@@ -33,35 +46,40 @@ export class Book {
   })
   createdAt?: Date;
 
-  @Column('int')
-  infoId: number;
-
   @Column('datetime', {
     name: 'updatedAt',
     default: () => "'CURRENT_TIMESTAMP(6)'",
   })
   updatedAt?: Date;
 
-  @Column('int', { name: 'donatorId', nullable: true })
-  donatorId: number | null;
+  @Column('int', { name: 'categoryId' })
+  categoryId?: number;
 
-  @ManyToOne(() => BookInfo, (bookInfo) => bookInfo.books, {
+  @OneToMany(() => BookCopy, (book) => book.info)
+  books?: BookCopy[];
+
+  @ManyToOne(() => Category, (category) => category.bookInfos, {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',
   })
-  @JoinColumn([{ name: 'infoId', referencedColumnName: 'id' }])
-  info?: BookInfo;
+  @JoinColumn([{ name: 'categoryId', referencedColumnName: 'id' }])
+  category?: Category;
 
-  @ManyToOne(() => User, (user) => user.books, {
-    onDelete: 'NO ACTION',
-    onUpdate: 'NO ACTION',
-  })
-  @JoinColumn([{ name: 'donatorId', referencedColumnName: 'id' }])
-  donator2?: User;
+  @OneToMany(() => Likes, (likes) => likes.bookInfo)
+  likes?: Likes[];
 
-  @OneToMany(() => Lending, (lending) => lending.book)
-  lendings?: Lending[];
-
-  @OneToMany(() => Reservation, (reservation) => reservation.book)
+  @OneToMany(() => Reservation, (reservation) => reservation.bookInfo)
   reservations?: Reservation[];
+
+  @OneToMany(() => Reviews, (reviews) => reviews.bookInfo)
+  reviews?: Reviews[];
+
+  @OneToMany(() => SuperTag, (superTags) => superTags.userId)
+  superTags?: SuperTag[];
+
+  @OneToOne(
+    () => BookInfoSearchKeywords,
+    (bookInfoSearchKeyword) => bookInfoSearchKeyword.bookInfo,
+  )
+  bookInfoSearchKeyword?: BookInfoSearchKeywords;
 }

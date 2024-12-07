@@ -5,7 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { BookInfo } from './BookInfo';
+import { Book } from './Book';
 
 @Index('id', ['id'], { unique: true })
 @Index('name', ['name'], { unique: true })
@@ -17,6 +17,6 @@ export class Category {
   @Column('varchar', { name: 'name', unique: true, length: 255 })
   name: string;
 
-  @OneToMany(() => BookInfo, (bookInfo) => bookInfo.category)
-  bookInfos: BookInfo[];
+  @OneToMany(() => Book, (bookInfo) => bookInfo.category)
+  bookInfos: Book[];
 }

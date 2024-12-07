@@ -1,5 +1,5 @@
+export * from './BookCopy';
 export * from './Book';
-export * from './BookInfo';
 export * from './BookInfoSearchKeywords';
 export * from './Category';
 export * from './Lending';

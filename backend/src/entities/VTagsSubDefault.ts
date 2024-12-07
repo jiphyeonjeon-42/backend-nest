@@ -1,5 +1,5 @@
 import { DataSource, ViewColumn, ViewEntity } from 'typeorm';
-import { BookInfo } from './BookInfo';
+import { Book } from './Book';
 import { SuperTag } from './SuperTag';
 import { SubTag } from './SubTag';
 import { User } from './User';
@@ -23,7 +23,7 @@ import { User } from './User';
       )
       .from(SuperTag, 'sp')
       .innerJoin(SubTag, 'sb', 'sb.superTagId = sp.id')
-      .innerJoin(BookInfo, 'bi', 'bi.id = sp.bookInfoId')
+      .innerJoin(Book, 'bi', 'bi.id = sp.bookInfoId')
       .innerJoin(User, 'u', 'u.id = sb.userId'),
 })
 export class VTagsSubDefault {
