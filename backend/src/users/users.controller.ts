@@ -458,9 +458,9 @@ export class UsersController {
     if (!includeResult.success || !paramResult.success) {
       throw new BadRequestException();
     }
-    const numId = parseInt(id);
+    const numId = paramResult.data;
     const includeData = includeResult.data;
-    const responseDTO = await this.usersService.getUserWithOptionalData(
+    const responseDTO = await this.usersService.findOne(
       numId,
       includeData.include,
     );
@@ -487,7 +487,7 @@ export class UsersController {
     example: ['lendings', 'reservations'],
   })
   async findAll(
-    @Query() query: GetUsersRequestDto,
+    @Query() query?: GetUsersRequestDto,
   ): Promise<PaginationDto<GetUsersResponseDto>> {
     const requestResult = getUsersRequestSchema.safeParse(query);
 
