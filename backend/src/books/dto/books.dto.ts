@@ -5,7 +5,7 @@ import { createPageSchema } from 'src/common/dtos/page.dto';
 import { metaSchema } from 'src/common/dtos/meta.dto';
 import { intSchema } from 'src/dto';
 
-const imageSchema = extendApi(z.string().url().optional(), {
+const imageSchema = extendApi(z.string().url().nullable(), {
   description: '도서 표지 이미지 URL',
 });
 
@@ -14,7 +14,7 @@ const isbnSchema = extendApi(z.string(), {
   example: '9788065960874',
 });
 
-const categoryCountSchema = z.object({
+export const categoryCountSchema = z.object({
   name: extendApi(z.string(), { description: '카테고리 이름' }),
   count: extendApi(intSchema, { description: '카테고리 내 도서 수' }),
 });
@@ -25,8 +25,8 @@ const bookSchema = z.object({
   author: extendApi(z.string(), { description: '저자' }),
   publisher: extendApi(z.string(), { description: '출판사' }),
   isbn: isbnSchema,
-  image: imageSchema,
-  publishedAt: extendApi(z.date(), { description: '출판일' }),
+  image: imageSchema.nullable(),
+  publishedAt: extendApi(z.date(), { description: '출판일' }).nullable(),
   createdAt: extendApi(z.date(), { description: '등록일' }),
   updatedAt: extendApi(z.date(), { description: '수정일' }),
 });
@@ -51,10 +51,8 @@ const bookSearchResultSchema = z.object({
   category: categorySchema,
 });
 
-const bookSearchResponseSchema = z.object({
-  books: createPageSchema(bookSearchResultSchema).shape.items,
+const bookGetResponseSchema = createPageSchema(bookSchema).extend({
   categories: z.array(categoryCountSchema),
-  meta: metaSchema,
 });
 
 const bookDetailResponseSchema = z.object({
@@ -82,9 +80,19 @@ export class BookDto extends createZodDto(bookSchema) {}
 export class CategoryDto extends createZodDto(categorySchema) {}
 export class BookCopyDto extends createZodDto(bookCopySchema) {}
 export class BookSearchResultDto extends createZodDto(bookSearchResultSchema) {}
-export class BookSearchResponseDto extends createZodDto(bookSearchResponseSchema) {}
-export class BookDetailResponseDto extends createZodDto(bookDetailResponseSchema) {}
-export class CreateBookCopyRequestDto extends createZodDto(createBookCopyRequestSchema) {}
-export class CreateBookCopyResponseDto extends createZodDto(createBookCopyResponseSchema) {}
-export class BookCopySearchResponseDto extends createZodDto(bookCopySearchResponseSchema) {}
-export class UpdateBookRequestDto extends createZodDto(updateBookRequestSchema) {}
+export class BookGetResponseDto extends createZodDto(bookGetResponseSchema) {}
+export class BookDetailResponseDto extends createZodDto(
+  bookDetailResponseSchema,
+) {}
+export class CreateBookCopyRequestDto extends createZodDto(
+  createBookCopyRequestSchema,
+) {}
+export class CreateBookCopyResponseDto extends createZodDto(
+  createBookCopyResponseSchema,
+) {}
+export class BookCopySearchResponseDto extends createZodDto(
+  bookCopySearchResponseSchema,
+) {}
+export class UpdateBookRequestDto extends createZodDto(
+  updateBookRequestSchema,
+) {}
