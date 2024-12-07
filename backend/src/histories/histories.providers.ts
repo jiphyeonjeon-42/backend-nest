@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { VHistories } from 'src/entities';
+import { VHistories } from 'src/database/entities';
 
 export const historiesProviders = [
   {

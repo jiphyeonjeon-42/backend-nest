@@ -4,10 +4,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HistoriesModule } from './histories/histories.module';
 import { BooksModule } from './books/books.module';
-import { dbConfig } from './config';
+import { typeOrmModuleOptions } from './database/config';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(dbConfig), HistoriesModule, BooksModule],
+  imports: [
+    TypeOrmModule.forRoot(typeOrmModuleOptions),
+    HistoriesModule,
+    BooksModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
