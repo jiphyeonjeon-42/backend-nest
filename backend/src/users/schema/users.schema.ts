@@ -12,6 +12,23 @@ export enum UserInclude {
   RESERVATIONS = 'reservations',
 }
 
+export const passwordSchema = z
+  .string()
+  .min(10, { message: 'Password must be at least 10 characters long' })
+  .max(42, { message: 'Password must not exceed 42 characters' })
+  .regex(/\d/, { message: 'Password must contain at least one digit' })
+  .regex(/[!@#$%^&*(),.?":{}|<>]/, {
+    message: 'Password must contain at least one symbol',
+  });
+
+export const fortyTwoEmailRegex = /@student\.42seoul\.kr$/;
+export const emailSchema = z
+  .string()
+  .max(320)
+  .refine((value) => !fortyTwoEmailRegex.test(value), {
+    message: 'Email cannot end with @student.42seoul.kr',
+  });
+
 export const getUserRequestSchema = z.object({
   include: z
     .preprocess(
@@ -101,26 +118,24 @@ export const getUsersResponseSchema = z
 
 export const getUsersResponseArraySchema = z.array(getUsersResponseInnerSchema);
 
-export const createUsersRequestSchema = z.object({
-  email: z.string().describe('이메일'),
-  password: z.string().describe('비밀번호'),
+export const createUserRequestSchema = z.object({
+  email: emailSchema,
+  password: passwordSchema,
 });
 
-export const updateUsersParamSchema = z.object({
-  id: z.coerce.number().int().describe('변경할 유저의 id 값').min(0),
-});
+export const createUserResponseSchema = z.object({ email: emailSchema });
 
 export const updateUsersRequestSchema = z.object({
-  nickname: z.string(),
-  intraId: z.coerce.number().int().min(0).describe('인트라 ID'),
-  slack: z.string().describe('slack 멤버 변수'),
-  role: z.coerce.number().int().describe('유저의 권한'),
-  penaltyEndDate: z.date().describe('패널티 끝나는 날짜'),
+  nickname: z.string().max(255).nullable().describe('닉네임').optional(),
+  intraId: z.coerce.number().int().min(0).describe('인트라 ID').optional(),
+  slack: z.string().nullable().describe('slack 멤버 변수').optional(),
+  role: z.coerce.number().int().describe('유저의 권한').optional(),
+  penaltyEndDate: z.date().describe('패널티 끝나는 날짜').optional(),
 });
 
 export const updateUsersResponseSchema = updateUsersRequestSchema;
 
-export const myUpdateUsersRequestSchema = createUsersRequestSchema;
+export const myUpdateUsersRequestSchema = createUserRequestSchema;
 
 export const getAPIVersionResponseSchema = z.object({
   version: extendApi(z.string().describe('API 버전'), {
