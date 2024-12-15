@@ -28,7 +28,7 @@ export class UsersService {
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
     @InjectRepository(VLendingForSearchUser)
-    private readonly userLendingRepository: Repository<VLendingForSearchUser>,
+    private readonly vLendingForSearchUser: Repository<VLendingForSearchUser>,
     @InjectRepository(UserReservation)
     private readonly userReservationRepository: Repository<UserReservation>,
   ) {}
