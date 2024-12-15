@@ -16,9 +16,11 @@ import {
   GetUserResponseDto,
   GetUsersRequestDto,
   GetUsersResponseDto,
+  UpdateUsersRequestDto,
 } from './dto/users.dto';
 import { getUserIncludes } from './users.enums';
 import { isStringInArrayCaseInsensitive } from 'src/common/utils/utils';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -136,5 +138,30 @@ export class UsersService {
     return await this.userReservationRepository.find({
       where: { userId: In(userIds) },
     });
+  }
+
+  async createUser(email: string, password: string): Promise<User> {
+    const hashedPassword = await bcrypt.hash(String(password), 10);
+    const userList = await this.usersRepository.find({ where: { email } });
+    if (userList.length > 0) {
+      throw new BadRequestException('Duplicate email');
+    }
+    const user = this.usersRepository.create({
+      email,
+      password: hashedPassword,
+    });
+    return await this.usersRepository.save(user);
+  }
+
+  async updateUser(
+    id: number,
+    requestData: UpdateUsersRequestDto,
+  ): Promise<User> {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+    const updatedUser = Object.assign(user, requestData);
+    return await this.usersRepository.save(updatedUser);
   }
 }

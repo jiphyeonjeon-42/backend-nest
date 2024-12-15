@@ -18,7 +18,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import {
-  CreateUsersRequestDto,
+  CreateUserResponseDto,
   GetAPIVersionResponseDto,
   GetUserResponseDto,
   GetUsersRequestDto,
@@ -30,16 +30,23 @@ import {
 import { PaginationDto } from 'src/common/dto/dto';
 import { UsersService } from './users.service';
 import {
+  createUserRequestSchema,
+  createUserResponseSchema,
+  fortyTwoEmailRegex,
   getUserRequestSchema,
   getUsersRequestSchema,
   getUsersResponseArraySchema,
   getUsersResponseInnerSchema,
   getUsersResponseSchema,
+  passwordSchema,
+  updateUsersRequestSchema,
   UserInclude,
 } from './schema/users.schema';
 import { z } from 'zod';
 import { findOneSchema } from 'src/common/schema/schema';
 import { paginate } from 'src/common/utils/paginate.utils';
+import { updateReviewsPathSchema } from 'src/reviews/schema/reviews.schema';
+import { User } from 'src/entities';
 
 @ApiTags('users')
 @Controller('users')
@@ -453,20 +460,27 @@ export class UsersController {
     @Param('id') id: string,
     @Query('include') include?: string[],
   ): Promise<GetUserResponseDto> {
+    // Validate request
     const paramResult = findOneSchema.safeParse(id);
     const includeResult = getUserRequestSchema.safeParse({ include });
+
     if (!includeResult.success || !paramResult.success) {
       throw new BadRequestException();
     }
     const numId = paramResult.data;
     const includeData = includeResult.data;
+
+    // Fetch user data
     const responseDTO = await this.usersService.findOne(
       numId,
       includeData.include,
     );
+
     if (!responseDTO) {
       throw new NotFoundException();
     }
+
+    // Validate response
     const responseResult = getUsersResponseInnerSchema.safeParse(responseDTO);
     if (!responseResult.success) {
       throw new InternalServerErrorException();
@@ -489,15 +503,19 @@ export class UsersController {
   async findAll(
     @Query() query?: GetUsersRequestDto,
   ): Promise<PaginationDto<GetUsersResponseDto>> {
+    // Validate request
     const requestResult = getUsersRequestSchema.safeParse(query);
 
     if (!requestResult.success) {
       throw new BadRequestException();
     }
     const requestQuery = requestResult.data;
+
+    // Fetch user data
     const [users, count] = await this.usersService.findAll(requestQuery);
     const responseResult = getUsersResponseSchema.safeParse(users);
 
+    // Validate response
     if (!responseResult.success) {
       throw new InternalServerErrorException();
     }
@@ -507,5 +525,117 @@ export class UsersController {
       requestQuery.page,
       requestQuery.limit,
     );
+  }
+
+  // @Get('me')
+  // @ApiOperation({ summary: '내 정보 조회' })
+  // async findMe(
+  //   @Query('include') include?: string[],
+  // ): Promise<GetUserResponseDto> {
+  //   // Validate request
+  //   const includeResult = getUserRequestSchema.safeParse({ include });
+  //   if (!includeResult.success) {
+  //     throw new BadRequestException();
+  //   }
+  //   const includeData = includeResult.data;
+
+  //   // Fetch user data
+  //   const responseDTO = await this.usersService.findMe(includeData);
+
+  //   const responseResult = getUsersResponseInnerSchema.safeParse(responseDTO);
+  //   if (!responseResult.success) {
+  //     throw new InternalServerErrorException();
+  //   }
+  //   return responseResult.data;
+  // }
+
+  @Post()
+  @ApiOperation({ summary: '유저 생성' })
+  @ApiResponse({ status: 201, description: '유저 생성 성공' })
+  async create(
+    @Body() createUsersRequestDto: CreateUserResponseDto,
+  ): Promise<CreateUserResponseDto> {
+    // Validate request
+    const requestResult = createUserRequestSchema.safeParse(
+      createUsersRequestDto,
+    );
+    if (!requestResult.success) {
+      console.log(requestResult.error);
+      throw new BadRequestException();
+    }
+    const { email, password } = requestResult.data;
+
+    // Create user
+    try {
+      const user = await this.usersService.createUser(email, password);
+      // Validate response
+      const responseResult = createUserResponseSchema.safeParse(user);
+      if (!responseResult.success) {
+        throw new InternalServerErrorException();
+      }
+      return responseResult.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: '유저 정보 수정' })
+  @ApiResponse({ status: 200, description: '유저 정보 수정 성공' })
+  async update(
+    @Param('id') id: string,
+    @Query() updateUser: UpdateUsersRequestDto,
+  ): Promise<User> {
+    // Validate request
+    const idValidation = findOneSchema.safeParse(id);
+    const queryValidation = updateUsersRequestSchema.safeParse(updateUser);
+    if (!idValidation.success || !queryValidation.success) {
+      throw new BadRequestException();
+    }
+
+    // Check if all fields are missing
+    const isAllMissing = Object.keys(queryValidation.data).length === 0;
+    if (isAllMissing) {
+      throw new BadRequestException();
+    }
+
+    const numId = idValidation.data;
+    const queryData = queryValidation.data;
+
+    // Update user
+    try {
+      return await this.usersService.updateUser(numId, queryData);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Patch('myupdate')
+  @ApiOperation({ summary: '로그인된 유저 정보 수정' })
+  @ApiResponse({ status: 200, description: '유저 정보 수정 성공' })
+  async updateMyself(
+    @Query() updateUser: UpdateUsersRequestDto,
+  ): Promise<User> {
+    // Validate request
+    const queryValidation = updateUsersRequestSchema.safeParse(updateUser);
+    if (!queryValidation.success) {
+      throw new BadRequestException();
+    }
+
+    // Check if all fields are missing
+    const isAllMissing = Object.keys(queryValidation.data).length === 0;
+    if (isAllMissing) {
+      throw new BadRequestException();
+    }
+
+    const queryData = queryValidation.data;
+    const numId = 1; // TODO: Get user id from token
+    // Update user
+    try {
+      return await this.usersService.updateUser(numId, queryData);
+      // Validate response
+    } catch (error) {
+      throw error;
+    }
   }
 }

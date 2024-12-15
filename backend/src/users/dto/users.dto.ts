@@ -1,13 +1,13 @@
 import { createZodDto } from '@anatine/zod-nestjs';
 import {
-  createUsersRequestSchema,
+  createUserRequestSchema,
+  createUserResponseSchema,
   getAPIVersionResponseSchema,
   getMyUserInfoResponseSchema,
   getUsersRequestSchema,
   getUsersResponseInnerSchema,
   getUsersResponseSchema,
   myUpdateUsersRequestSchema,
-  updateUsersParamSchema,
   updateUsersRequestSchema,
   updateUsersResponseSchema,
 } from '../schema/users.schema';
@@ -21,12 +21,6 @@ export class GetUserResponseDto extends createZodDto(
 export class GetUsersRequestDto extends createZodDto(getUsersRequestSchema) {}
 
 export class GetUsersResponseDto extends createZodDto(getUsersResponseSchema) {}
-
-export class CreateUsersRequestDto extends createZodDto(
-  createUsersRequestSchema,
-) {}
-
-export class UpdateUsersParamDto extends createZodDto(updateUsersParamSchema) {}
 
 export class UpdateUsersRequestDto extends createZodDto(
   updateUsersRequestSchema,
@@ -46,4 +40,8 @@ export class GetAPIVersionResponseDto extends createZodDto(
 
 export class GetMyUserInfoResponseDto extends createZodDto(
   getMyUserInfoResponseSchema,
+) {}
+
+export class CreateUserResponseDto extends createZodDto(
+  createUserResponseSchema,
 ) {}
