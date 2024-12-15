@@ -1,6 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
-import { User, UserReservation, VLending, VLendingForSearchUser } from 'src/entities';
+import {
+  User,
+  UserReservation,
+  VLending,
+  VLendingForSearchUser,
+} from 'src/entities';
 import { getRepository, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
