@@ -27,6 +27,7 @@ import {
   CreateBookCopyResponseDto,
   BookCopySearchResponseDto,
   UpdateBookRequestDto,
+  BookIDDto,
 } from './dto/books.dto';
 import { PaginationOptionsDto } from 'src/common/dtos/page-options.dto';
 
@@ -77,7 +78,7 @@ export class BooksController {
     description: '도서 상세 정보 조회 성공',
     type: BookDetailResponseDto,
   })
-  async findOne(@Param('id') id: number): Promise<BookDetailResponseDto> {
+  async findOne(@Param() { id }: BookIDDto): Promise<BookDetailResponseDto> {
     const book = await this.booksService.findOne(id);
     if (!book) {
       throw new NotFoundException(`Book with ID ${id} not found`);
@@ -95,7 +96,7 @@ export class BooksController {
     type: CreateBookCopyResponseDto,
   })
   async createCopy(
-    @Param('id') id: number,
+    @Param() { id }: BookIDDto,
     @Body() createBookCopyDto: CreateBookCopyRequestDto,
   ): Promise<CreateBookCopyResponseDto> {
     return this.booksService.createCopy(id, createBookCopyDto);
@@ -110,7 +111,7 @@ export class BooksController {
     type: BookCopySearchResponseDto,
   })
   async findCopies(
-    @Param('id') id: number,
+    @Param() { id }: BookIDDto,
   ): Promise<BookCopySearchResponseDto> {
     return this.booksService.findCopies(id);
   }
@@ -125,7 +126,7 @@ export class BooksController {
     type: BookDto,
   })
   async update(
-    @Param('id') id: number,
+    @Param() { id }: BookIDDto,
     @Body() updateBookDto: UpdateBookRequestDto,
   ): Promise<BookDto> {
     return this.booksService.update(id, updateBookDto);
@@ -138,7 +139,7 @@ export class BooksController {
     status: 204,
     description: '도서 삭제 성공',
   })
-  async remove(@Param('id') id: number): Promise<void> {
+  async remove(@Param() { id }: BookIDDto): Promise<void> {
     await this.booksService.remove(id);
   }
 }
