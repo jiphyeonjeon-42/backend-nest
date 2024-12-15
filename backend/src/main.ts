@@ -2,9 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { patchNestjsSwagger } from '@anatine/zod-nestjs';
+import { SaneLogger } from './SaneLogger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: new SaneLogger(),
+  });
 
   const config = new DocumentBuilder()
     .setTitle('집현전 백엔드 6차')
