@@ -48,7 +48,6 @@ export class UsersService {
     if (!user) return null;
 
     Object.assign(userResponseDto, user);
-    console.log('includes', includes);
     if (!includes) return userResponseDto;
     if (includes.includes('lendings')) {
       userResponseDto.lendings = await this.userLendingRepository.find({
