@@ -53,7 +53,7 @@ export class UsersService {
       userResponseDto.lendings = await this.userLendingRepository.find({
         where: { userId: id },
       });
-      console.log(userResponseDto.lendings);
+      // console.log(userResponseDto.lendings);
     }
     if (includes.includes('reservations')) {
       userResponseDto.reservations = await this.userReservationRepository.find({

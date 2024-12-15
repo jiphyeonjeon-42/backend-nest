@@ -26,7 +26,7 @@ const mockReservations = [
   },
 ];
 
-const mockLendings = [
+export const mockVLendings = [
   {
     userId: 1,
     bookInfoId: 201,
@@ -44,7 +44,7 @@ const mockLendings = [
 export const mockGetUserWithLendingsReservations: GetUserResponseDto = {
   ...mockUsers,
   reservations: mockReservations,
-  lendings: mockLendings,
+  lendings: mockVLendings,
 };
 
 export const mockGetUserWithReservations: GetUserResponseDto = {
@@ -54,5 +54,5 @@ export const mockGetUserWithReservations: GetUserResponseDto = {
 
 export const mockGetUserWithLendings: GetUserResponseDto = {
   ...mockUsers,
-  lendings: mockLendings,
+  lendings: mockVLendings,
 };

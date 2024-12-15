@@ -19,26 +19,20 @@ import {
 } from '@nestjs/swagger';
 import {
   CreateUserResponseDto,
-  GetAPIVersionResponseDto,
   GetUserResponseDto,
   GetUsersRequestDto,
   GetUsersResponseDto,
-  MyUpddateUsersRequestDto,
   UpdateUsersRequestDto,
-  UpdateUsersResponseDto,
 } from './dto/users.dto';
 import { PaginationDto } from 'src/common/dto/dto';
 import { UsersService } from './users.service';
 import {
   createUserRequestSchema,
   createUserResponseSchema,
-  fortyTwoEmailRegex,
   getUserRequestSchema,
   getUsersRequestSchema,
-  getUsersResponseArraySchema,
   getUsersResponseInnerSchema,
   getUsersResponseSchema,
-  passwordSchema,
   updateUsersRequestSchema,
   UserInclude,
 } from './schema/users.schema';
