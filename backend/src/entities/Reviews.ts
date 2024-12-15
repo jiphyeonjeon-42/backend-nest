@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from './User';
-import { BookInfo } from './BookInfo';
+import { Book } from './Book';
 
 @Index('FK_529dceb01ef681127fef04d755d3', ['userId'], {})
 @Index('FK_bookInfo2', ['bookInfoId'], {})
@@ -59,10 +59,10 @@ export class Reviews {
   @JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
   user: User;
 
-  @ManyToOne(() => BookInfo, (bookInfo) => bookInfo.reviews, {
+  @ManyToOne(() => Book, (bookInfo) => bookInfo.reviews, {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',
   })
   @JoinColumn([{ name: 'bookInfoId', referencedColumnName: 'id' }])
-  bookInfo: BookInfo;
+  bookInfo: Book;
 }

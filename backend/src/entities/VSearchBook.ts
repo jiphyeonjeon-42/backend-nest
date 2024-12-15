@@ -1,6 +1,6 @@
 import { DataSource, ViewColumn, ViewEntity } from 'typeorm';
-import { BookInfo } from './BookInfo';
 import { Book } from './Book';
+import { BookCopy } from './BookCopy';
 import { Category } from './Category';
 
 @ViewEntity('v_search_book', {
@@ -29,8 +29,8 @@ import { Category } from './Category';
           '  ), TRUE, FALSE)',
         'isLendable',
       )
-      .from(Book, 'book')
-      .leftJoin(BookInfo, 'book_info', 'book_info.id = book.infoId')
+      .from(BookCopy, 'book')
+      .leftJoin(Book, 'book_info', 'book_info.id = book.infoId')
       .leftJoin(Category, 'category', 'book_info.categoryId = category.id'),
 })
 export class VSearchBook {

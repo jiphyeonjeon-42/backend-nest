@@ -1,6 +1,6 @@
 import { DataSource, ViewColumn, ViewEntity } from 'typeorm';
-import { BookInfo } from './BookInfo';
 import { Book } from './Book';
+import { BookCopy } from './BookCopy';
 import { Category } from './Category';
 import { Lending } from './Lending';
 import { Reservation } from './Reservation';
@@ -22,8 +22,8 @@ import { Reservation } from './Reservation';
       .addSelect("date_format(book.updatedAt, '%Y-%m-%d %T')", 'updatedAt')
       .addSelect('book_info.categoryId', 'categoryId')
       .addSelect('category.name', 'category')
-      .from(Book, 'book')
-      .leftJoin(BookInfo, 'book_info', 'book_info.id = book.infoId')
+      .from(BookCopy, 'book')
+      .leftJoin(Book, 'book_info', 'book_info.id = book.infoId')
       .leftJoin(Category, 'category', 'book_info.categoryId = category.id')
       .leftJoin(Lending, 'l', 'book.id = l.bookId')
       .leftJoin(Reservation, 'r', 'r.bookId = book.id AND r.status = 0')

@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Book } from './Book';
+import { BookCopy } from './BookCopy';
 import { User } from './User';
 
 @Index('FK_f2adde8c7d298210c39c500d966', ['lendingLibrarianId'], {})
@@ -47,12 +47,12 @@ export class Lending {
   })
   updatedAt: Date;
 
-  @ManyToOne(() => Book, (book) => book.lendings, {
+  @ManyToOne(() => BookCopy, (book) => book.lendings, {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',
   })
   @JoinColumn([{ name: 'bookId', referencedColumnName: 'id' }])
-  book: Book;
+  book: BookCopy;
 
   @Column({ name: 'bookId', type: 'int' })
   bookId: number;

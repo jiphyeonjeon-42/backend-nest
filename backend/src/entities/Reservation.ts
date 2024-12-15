@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from './User';
-import { BookInfo } from './BookInfo';
 import { Book } from './Book';
+import { BookCopy } from './BookCopy';
 
 @Index('FK_bookInfo', ['bookInfoId'], {})
 @Entity('reservation')
@@ -47,19 +47,19 @@ export class Reservation {
   @JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
   user: User;
 
-  @ManyToOne(() => BookInfo, (bookInfo) => bookInfo.reservations, {
+  @ManyToOne(() => Book, (bookInfo) => bookInfo.reservations, {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',
   })
   @JoinColumn([{ name: 'bookInfoId', referencedColumnName: 'id' }])
-  bookInfo: BookInfo;
+  bookInfo: Book;
 
-  @ManyToOne(() => Book, (book) => book.reservations, {
+  @ManyToOne(() => BookCopy, (book) => book.reservations, {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',
   })
   @JoinColumn([{ name: 'bookId', referencedColumnName: 'id' }])
-  book: Book;
+  book: BookCopy;
 
   @Column('int', { name: 'bookId', nullable: true })
   bookId: number | null;

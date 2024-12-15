@@ -1,5 +1,5 @@
 import { ViewEntity, ViewColumn, DataSource } from 'typeorm';
-import { BookInfo } from './BookInfo';
+import { Book } from './Book';
 import { Reservation } from './Reservation';
 
 @ViewEntity({
@@ -22,7 +22,7 @@ import { Reservation } from './Reservation';
       .addSelect('bi.image', 'image')
       .addSelect('r.userId', 'userId')
       .from(Reservation, 'r')
-      .leftJoin(BookInfo, 'bi', 'r.bookInfoId = bi.id')
+      .leftJoin(Book, 'bi', 'r.bookInfoId = bi.id')
       .where('r.status = 0'),
 })
 export class UserReservation {
