@@ -1,4 +1,5 @@
 import { createZodDto } from '@anatine/zod-nestjs';
+import { intSchema } from 'src/dto';
 import { z } from 'zod';
 
 export const getHistoriesRequestSchema = z.object({
@@ -20,14 +21,14 @@ export const getHistoriesResponseSchema = z
   .object({
     items: z.array(
       z.object({
-        id: z.number().int(),
+        id: intSchema,
         lendingCondition: z.string(),
         login: z.string(),
         returningCondition: z.string(),
-        penaltyDays: z.number().int(),
+        penaltyDays: intSchema,
         callSign: z.string(),
         title: z.string(),
-        bookInfoId: z.number().int(),
+        bookInfoId: intSchema,
         createdAt: z.string(),
       }),
     ),

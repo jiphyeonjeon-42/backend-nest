@@ -6,7 +6,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { BookInfo } from './BookInfo';
+import { Book } from './Book';
 
 @Index('FK_bookInfoId', ['bookInfoId'], {})
 @Entity('book_info_search_keywords')
@@ -35,7 +35,7 @@ export class BookInfoSearchKeywords {
   @Column('int', { name: 'book_info_id' })
   bookInfoId?: number;
 
-  @OneToOne(() => BookInfo, (bookInfo) => bookInfo.id)
+  @OneToOne(() => Book, (bookInfo) => bookInfo.id)
   @JoinColumn([{ name: 'book_info_id', referencedColumnName: 'id' }])
-  bookInfo?: BookInfo;
+  bookInfo?: Book;
 }

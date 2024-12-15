@@ -5,7 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Book } from './Book';
+import { BookCopy } from './BookCopy';
 import { Lending } from './Lending';
 import { Likes } from './Likes';
 import { Reservation } from './Reservation';
@@ -62,8 +62,8 @@ export class User {
   })
   updatedAt: Date;
 
-  @OneToMany(() => Book, (book) => book.donator2)
-  books: Book[];
+  @OneToMany(() => BookCopy, (book) => book.donator2)
+  books: BookCopy[];
 
   @OneToMany(() => Lending, (lending) => lending.user)
   lendings: Lending[];

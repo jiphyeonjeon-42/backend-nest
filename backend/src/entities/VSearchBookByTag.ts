@@ -1,5 +1,5 @@
 import { DataSource, ViewColumn, ViewEntity } from 'typeorm';
-import { BookInfo } from './BookInfo';
+import { Book } from './Book';
 import { Category } from './Category';
 import { SubTag } from './SubTag';
 import { SuperTag } from './SuperTag';
@@ -29,7 +29,7 @@ import { SuperTag } from './SuperTag';
             .where('bi.id = bi.id'),
         'lendingCnt',
       )
-      .from(BookInfo, 'bi')
+      .from(Book, 'bi')
       .innerJoin(Category, 'c', 'c.id = bi.categoryId')
       .innerJoin(SuperTag, 'sp', 'sp.bookInfoId = bi.id')
       .leftJoin(SubTag, 'sb', 'sb.superTagId = sp.id'),

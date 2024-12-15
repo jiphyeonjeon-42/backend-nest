@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { SubTag } from './SubTag';
 import { User } from './User';
-import { BookInfo } from './BookInfo';
+import { Book } from './Book';
 
 @Index('userId', ['userId'], {})
 @Index('bookInfoId', ['bookInfoId'], {})
@@ -55,10 +55,10 @@ export class SuperTag {
   @JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
   user: User;
 
-  @ManyToOne(() => BookInfo, (bookInfo) => bookInfo.superTags, {
+  @ManyToOne(() => Book, (bookInfo) => bookInfo.superTags, {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',
   })
   @JoinColumn([{ name: 'bookInfoId', referencedColumnName: 'id' }])
-  bookInfo: BookInfo;
+  bookInfo: Book;
 }

@@ -1,7 +1,7 @@
 import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 
-export const intSchema = z.number().int();
+export const intSchema = z.coerce.number().int();
 export const bookIdSchema = intSchema.describe('도서 ID');
 export const userIdSchema = intSchema.describe('회원 ID');
 export const positiveSchema = intSchema
