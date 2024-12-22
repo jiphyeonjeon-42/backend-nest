@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Category } from '../entities/Category';
-import { Book } from '../entities/Book';
+import { Category } from '../database/entities/Category';
+import { Book } from '../database/entities/Book';
 import { categoryCountSchema } from 'src/books/dto/books.dto';
 
 @Injectable()

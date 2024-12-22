@@ -1,6 +1,6 @@
 import { ViewEntity, ViewColumn, DataSource } from 'typeorm';
-import { Book } from './Book';
-import { Reservation } from './Reservation';
+import { Book } from '../entities/Book';
+import { Reservation } from '../entities/Reservation';
 
 @ViewEntity({
   expression: (Data: DataSource) =>

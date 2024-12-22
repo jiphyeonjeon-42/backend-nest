@@ -19,7 +19,12 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "migrate:run": "pnpm ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/database/config.ts",
+    "migrate:revert": "pnpm ts-node ./node_modules/typeorm/cli.js migration:revert -d ./src/database/config.ts",
+    "migrate:reset": "pnpm migrate:revert && pnpm migrate:run",
+    "migrate:create": "pnpm ts-node ./node_modules/typeorm/cli.js migration:create ./src/database/migrate/custom",
+    "migrate:generate": "pnpm ts-node ./node_modules/typeorm/cli.js migration:generate ./src/database/migrate/auto -d ./src/database/config.ts"
   },
   "dependencies": {
     "@anatine/zod-nestjs": "^2.0.9",
