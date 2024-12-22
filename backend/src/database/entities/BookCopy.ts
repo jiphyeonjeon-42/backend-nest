@@ -1,11 +1,13 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Book } from './Book';
 import { User } from './User';
@@ -13,7 +15,6 @@ import { Lending } from './Lending';
 import { Reservation } from './Reservation';
 import { BookStatus } from 'src/books/constants';
 
-@Index('FK_donator_id_from_user', ['donatorId'], {})
 @Entity('book')
 export class BookCopy {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
@@ -28,19 +29,13 @@ export class BookCopy {
   @Column('int', { name: 'status' })
   status: BookStatus;
 
-  @Column('datetime', {
-    name: 'createdAt',
-    default: () => "'CURRENT_TIMESTAMP(6)'",
-  })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt?: Date;
 
   @Column('int')
   infoId: number;
 
-  @Column('datetime', {
-    name: 'updatedAt',
-    default: () => "'CURRENT_TIMESTAMP(6)'",
-  })
+  @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt?: Date;
 
   @Column('int', { name: 'donatorId', nullable: true })
@@ -53,12 +48,18 @@ export class BookCopy {
   @JoinColumn([{ name: 'infoId', referencedColumnName: 'id' }])
   info?: Book;
 
-  @ManyToOne(() => User, (user) => user.books, {
+  @ManyToOne(() => User, (user) => user.donateBooks, {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',
   })
-  @JoinColumn([{ name: 'donatorId', referencedColumnName: 'id' }])
-  donator2?: User;
+  @JoinColumn([
+    {
+      name: 'donatorId',
+      referencedColumnName: 'id',
+      foreignKeyConstraintName: 'FK_donator_id_from_user',
+    },
+  ])
+  donateUser?: User;
 
   @OneToMany(() => Lending, (lending) => lending.book)
   lendings?: Lending[];

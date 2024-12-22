@@ -1,16 +1,16 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
-  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from './User';
 import { Book } from './Book';
 import { BookCopy } from './BookCopy';
 
-@Index('FK_bookInfo', ['bookInfoId'], {})
 @Entity('reservation')
 export class Reservation {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
@@ -19,16 +19,10 @@ export class Reservation {
   @Column('datetime', { name: 'endAt', nullable: true })
   endAt: Date | null;
 
-  @Column('datetime', {
-    name: 'createdAt',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-  })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 
-  @Column('datetime', {
-    name: 'updatedAt',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-  })
+  @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
 
   @Column('int', { name: 'status', default: () => '0' })
@@ -51,7 +45,13 @@ export class Reservation {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',
   })
-  @JoinColumn([{ name: 'bookInfoId', referencedColumnName: 'id' }])
+  @JoinColumn([
+    {
+      name: 'bookInfoId',
+      referencedColumnName: 'id',
+      foreignKeyConstraintName: 'FK_bookInfo',
+    },
+  ])
   bookInfo: Book;
 
   @ManyToOne(() => BookCopy, (book) => book.reservations, {

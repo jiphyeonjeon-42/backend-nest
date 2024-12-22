@@ -62,6 +62,12 @@ $ pnpm dev
 
 위 명령어로 개발용 docker compose를 실행합니다.
 
+### migrate 실행
+```sh
+$ pnpm run migrate:run
+```
+위 명령어로 migration 실행합니
+
 ![](./swagger.webp)
 
 <http://localhost:3000/api> 경로에 접근하여 API 명세가 올바르게 표시되는지 확인합니다.

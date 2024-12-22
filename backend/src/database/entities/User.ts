@@ -1,17 +1,17 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   Index,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { BookCopy } from './BookCopy';
 import { Lending } from './Lending';
 import { Likes } from './Likes';
 import { Reservation } from './Reservation';
 import { Reviews } from './Reviews';
-import { SubTag } from './SubTag';
-import { SuperTag } from './SuperTag';
 
 @Index('email', ['email'], { unique: true })
 @Index('intraId', ['intraId'], { unique: true })
@@ -50,29 +50,23 @@ export class User {
   @Column('tinyint', { name: 'role', default: () => '0' })
   role: number;
 
-  @Column('datetime', {
-    name: 'createdAt',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-  })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 
-  @Column('datetime', {
-    name: 'updatedAt',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-  })
+  @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
 
-  @OneToMany(() => BookCopy, (book) => book.donator2)
-  books: BookCopy[];
+  @OneToMany(() => BookCopy, (book) => book.donateUser)
+  donateBooks: BookCopy[];
 
   @OneToMany(() => Lending, (lending) => lending.user)
   lendings: Lending[];
 
   @OneToMany(() => Lending, (lending) => lending.lendingLibrarian)
-  lendings2: Lending[];
+  librarianLendings: Lending[];
 
   @OneToMany(() => Lending, (lending) => lending.returningLibrarian)
-  lendings3: Lending[];
+  librarianReturnings: Lending[];
 
   @OneToMany(() => Likes, (likes) => likes.user)
   likes: Likes[];
@@ -82,10 +76,4 @@ export class User {
 
   @OneToMany(() => Reviews, (reviews) => reviews.user)
   reviews: Reviews[];
-
-  @OneToMany(() => SubTag, (subtag) => subtag.userId)
-  subTag: SubTag[];
-
-  @OneToMany(() => SuperTag, (superTags) => superTags.userId)
-  superTags: SuperTag[];
 }
