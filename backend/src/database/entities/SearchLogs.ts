@@ -8,22 +8,30 @@ import {
 } from 'typeorm';
 import { SearchKeywords } from './SearchKeywords';
 
-@Index('FK_searchKeywordId', ['searchKeywordId'], {})
 @Entity('search_logs')
 export class SearchLogs {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
-  id?: number;
+  id: number;
 
-  @Column('int', { name: 'search_keyword_id' })
+  @Column('int', { name: 'search_keyword_id', nullable: true })
   searchKeywordId?: number;
 
-  @Column('varchar', { name: 'timestamp', length: 255 })
-  timestamp?: string;
+  @Column({
+    type: 'timestamp',
+    nullable: false,
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  timestamp: Date;
 
   @ManyToOne(() => SearchKeywords, (SearchKeyword) => SearchKeyword.id, {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',
   })
-  @JoinColumn([{ name: 'search_keyword_id', referencedColumnName: 'id' }])
+  @JoinColumn([
+    {
+      name: 'search_keyword_id',
+      referencedColumnName: 'id',
+    },
+  ])
   searchKeyword?: SearchKeywords;
 }

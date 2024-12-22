@@ -1,7 +1,7 @@
 import { DataSource, ViewColumn, ViewEntity } from 'typeorm';
-import { Book } from './Book';
-import { BookCopy } from './BookCopy';
-import { Category } from './Category';
+import { Book } from '../entities/Book';
+import { BookCopy } from '../entities/BookCopy';
+import { Category } from '../entities/Category';
 
 @ViewEntity('v_search_book', {
   expression: (Data: DataSource) =>

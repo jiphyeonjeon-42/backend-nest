@@ -13,6 +13,7 @@ export const dbConfig: DataSourceOptions = {
   database: process.env.MYSQL_DATABASE,
   entities: [__dirname + '/entities/*{.ts,.js}'],
   migrations: [__dirname + '/migrate/*{.ts,.js}'],
+  migrationsTableName: 'typeorm_migrations',
   synchronize: false,
 };
 

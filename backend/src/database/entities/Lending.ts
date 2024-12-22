@@ -1,16 +1,15 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
-  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { BookCopy } from './BookCopy';
 import { User } from './User';
 
-@Index('FK_f2adde8c7d298210c39c500d966', ['lendingLibrarianId'], {})
-@Index('FK_returningLibrarianId', ['returningLibrarianId'], {})
 @Entity('lending', { schema: '42library' })
 export class Lending {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
@@ -19,7 +18,12 @@ export class Lending {
   @Column('int', { name: 'lendingLibrarianId' })
   lendingLibrarianId: number;
 
-  @Column('varchar', { name: 'lendingCondition', length: 255 })
+  @Column('varchar', {
+    name: 'lendingCondition',
+    length: 255,
+    nullable: false,
+    default: '',
+  })
   lendingCondition: string;
 
   @Column('int', { name: 'returningLibrarianId', nullable: true })
@@ -35,16 +39,10 @@ export class Lending {
   @Column('datetime', { name: 'returnedAt', nullable: true })
   returnedAt: Date | null;
 
-  @Column('timestamp', {
-    name: 'createdAt',
-    default: () => "'CURRENT_TIMESTAMP(6)'",
-  })
+  @CreateDateColumn({ name: 'createdAt', type: 'timestamp' })
   createdAt: Date;
 
-  @Column('timestamp', {
-    name: 'updatedAt',
-    default: () => "'CURRENT_TIMESTAMP(6)'",
-  })
+  @UpdateDateColumn({ name: 'updatedAt', type: 'timestamp' })
   updatedAt: Date;
 
   @ManyToOne(() => BookCopy, (book) => book.lendings, {
@@ -67,17 +65,29 @@ export class Lending {
   @Column({ name: 'userId', type: 'int' })
   userId: number;
 
-  @ManyToOne(() => User, (user) => user.lendings2, {
+  @ManyToOne(() => User, (user) => user.librarianLendings, {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',
   })
-  @JoinColumn([{ name: 'lendingLibrarianId', referencedColumnName: 'id' }])
+  @JoinColumn([
+    {
+      name: 'lendingLibrarianId',
+      referencedColumnName: 'id',
+      foreignKeyConstraintName: 'FK_f2adde8c7d298210c39c500d966',
+    },
+  ])
   lendingLibrarian: User;
 
-  @ManyToOne(() => User, (user) => user.lendings3, {
+  @ManyToOne(() => User, (user) => user.librarianReturnings, {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',
   })
-  @JoinColumn([{ name: 'returningLibrarianId', referencedColumnName: 'id' }])
+  @JoinColumn([
+    {
+      name: 'returningLibrarianId',
+      referencedColumnName: 'id',
+      foreignKeyConstraintName: 'FK_returningLibrarianId',
+    },
+  ])
   returningLibrarian: User;
 }

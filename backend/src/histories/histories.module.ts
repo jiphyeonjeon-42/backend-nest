@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { HistoriesService } from 'src/histories/histories.service';
 import { historiesProviders } from './histories.providers'; // Import the 'historiesProviders' variable from the correct file
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { VHistories } from 'src/database/entities/VHistories';
+import { VHistories } from 'src/database/legacy_view/VHistories';
 import { HistoriesController } from 'src/histories/histories.controller';
 
 @Module({

@@ -13,10 +13,8 @@ import { Category } from './Category';
 import { Likes } from './Likes';
 import { Reservation } from './Reservation';
 import { Reviews } from './Reviews';
-import { SuperTag } from './SuperTag';
 import { BookInfoSearchKeywords } from './BookInfoSearchKeywords';
 
-@Index('categoryId', ['categoryId'], {})
 @Entity('book_info')
 export class Book {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
@@ -42,13 +40,14 @@ export class Book {
 
   @Column('datetime', {
     name: 'createdAt',
-    default: () => "'CURRENT_TIMESTAMP(6)'",
+    default: 'CURRENT_TIMESTAMP(6)',
   })
   createdAt: Date;
 
   @Column('datetime', {
     name: 'updatedAt',
-    default: () => "'CURRENT_TIMESTAMP(6)'",
+    default: 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
   updatedAt: Date;
 
@@ -62,7 +61,12 @@ export class Book {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',
   })
-  @JoinColumn([{ name: 'categoryId', referencedColumnName: 'id' }])
+  @JoinColumn([
+    {
+      name: 'categoryId',
+      referencedColumnName: 'id',
+    },
+  ])
   category: Category;
 
   @OneToMany(() => Likes, (likes) => likes.bookInfo)
@@ -73,9 +77,6 @@ export class Book {
 
   @OneToMany(() => Reviews, (reviews) => reviews.bookInfo)
   reviews?: Reviews[];
-
-  @OneToMany(() => SuperTag, (superTags) => superTags.userId)
-  superTags?: SuperTag[];
 
   @OneToOne(
     () => BookInfoSearchKeywords,

@@ -1,7 +1,6 @@
 import {
   Column,
   Entity,
-  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -9,8 +8,6 @@ import {
 import { User } from './User';
 import { Book } from './Book';
 
-@Index('FK_529dceb01ef681127fef04d755d4', ['userId'], {})
-@Index('FK_bookInfo3', ['bookInfoId'], {})
 @Entity('likes', { schema: '42library' })
 export class Likes {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
@@ -29,13 +26,25 @@ export class Likes {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',
   })
-  @JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
+  @JoinColumn([
+    {
+      name: 'userId',
+      referencedColumnName: 'id',
+      foreignKeyConstraintName: 'FK_529dceb01ef681127fef04d755d4',
+    },
+  ])
   user: User;
 
   @ManyToOne(() => Book, (bookInfo) => bookInfo.likes, {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',
   })
-  @JoinColumn([{ name: 'bookInfoId', referencedColumnName: 'id' }])
+  @JoinColumn([
+    {
+      name: 'bookInfoId',
+      referencedColumnName: 'id',
+      foreignKeyConstraintName: 'FK_bookInfo3',
+    },
+  ])
   bookInfo: Book;
 }

@@ -1,16 +1,15 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
-  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from './User';
 import { Book } from './Book';
 
-@Index('FK_529dceb01ef681127fef04d755d3', ['userId'], {})
-@Index('FK_bookInfo2', ['bookInfoId'], {})
 @Entity('reviews')
 export class Reviews {
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
@@ -22,16 +21,10 @@ export class Reviews {
   @Column('int', { name: 'bookInfoId' })
   bookInfoId: number;
 
-  @Column('datetime', {
-    name: 'createdAt',
-    default: () => "'CURRENT_TIMESTAMP(6)'",
-  })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 
-  @Column('datetime', {
-    name: 'updatedAt',
-    default: () => "'CURRENT_TIMESTAMP(6)'",
-  })
+  @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
 
   @Column('int', { name: 'updateUserId' })
@@ -56,13 +49,25 @@ export class Reviews {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',
   })
-  @JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
+  @JoinColumn([
+    {
+      name: 'userId',
+      referencedColumnName: 'id',
+      foreignKeyConstraintName: 'FK_529dceb01ef681127fef04d755d3',
+    },
+  ])
   user: User;
 
   @ManyToOne(() => Book, (bookInfo) => bookInfo.reviews, {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',
   })
-  @JoinColumn([{ name: 'bookInfoId', referencedColumnName: 'id' }])
+  @JoinColumn([
+    {
+      name: 'bookInfoId',
+      referencedColumnName: 'id',
+      foreignKeyConstraintName: 'FK_bookInfo2',
+    },
+  ])
   bookInfo: Book;
 }
