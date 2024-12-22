@@ -79,6 +79,7 @@ export class CategoryCountDto extends createZodDto(categoryCountSchema) {}
 export class BookDto extends createZodDto(bookSchema) {}
 export class CategoryDto extends createZodDto(categorySchema) {}
 export class BookCopyDto extends createZodDto(bookCopySchema) {}
+export class BookIDDto extends createZodDto(bookSchema.pick({ id: true })) {}
 export class BookSearchResultDto extends createZodDto(bookSearchResultSchema) {}
 export class BookGetResponseDto extends createZodDto(bookGetResponseSchema) {}
 export class BookDetailResponseDto extends createZodDto(
