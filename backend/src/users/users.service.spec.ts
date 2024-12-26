@@ -2,11 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { UsersService } from './users.service';
 import { User, VLendingForSearchUser, UserReservation } from 'src/entities';
-import { ArrayOverlap, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserInclude } from './schema/users.schema';
 import { BadRequestException } from '@nestjs/common';
 import { UpdateUsersRequestDto } from './dto/users.dto';
 import * as bcrypt from 'bcrypt';
+import { Order } from 'src/common/dtos/page-options.dto';
 
 jest.mock('bcrypt');
 
@@ -150,7 +151,14 @@ describe('UsersService', () => {
 
     describe('findAll', () => {
       it('should return users without includes if includes is empty', async () => {
-        const query = { search: '', page: 1, limit: 10, include: [] };
+        const query = {
+          search: '',
+          page: 1,
+          take: 10,
+          include: [],
+          order: Order.ASC,
+          skip: 0,
+        };
         const users = [
           { id: 1, email: 'test1@example.com', nickname: 'test1' },
           { id: 2, email: 'test2@example.com', nickname: 'test2' },
@@ -175,8 +183,10 @@ describe('UsersService', () => {
         const query = {
           search: '',
           page: 1,
-          limit: 10,
+          take: 10,
           include: [UserInclude.LENDINGS, UserInclude.RESERVATIONS],
+          order: Order.ASC,
+          skip: 0,
         };
         const users = [
           { id: 1, email: 'test1@example.com', nickname: 'test1' },
@@ -224,8 +234,10 @@ describe('UsersService', () => {
         const query = {
           search: '',
           page: 1,
-          limit: 10,
+          take: 10,
           include: [UserInclude.LENDINGS],
+          order: Order.ASC,
+          skip: 0,
         };
         const users = [
           { id: 1, email: 'test1@example.com', nickname: 'test1' },
@@ -268,8 +280,10 @@ describe('UsersService', () => {
         const query = {
           search: '',
           page: 1,
-          limit: 10,
+          take: 10,
           include: [UserInclude.RESERVATIONS],
+          order: Order.ASC,
+          skip: 0,
         };
         const users = [
           { id: 1, email: 'test1@example.com', nickname: 'test1' },
@@ -307,7 +321,14 @@ describe('UsersService', () => {
       });
 
       it('should return users matching the search criteria', async () => {
-        const query = { search: 'test1', page: 1, limit: 10, include: [] };
+        const query = {
+          search: 'test1',
+          page: 1,
+          take: 10,
+          include: [],
+          order: Order.ASC,
+          skip: 0,
+        };
         const users = [
           { id: 1, email: 'test1@example.com', nickname: 'test1' },
         ] as User[];

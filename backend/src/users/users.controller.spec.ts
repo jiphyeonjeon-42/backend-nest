@@ -1,9 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { findOneSchema } from 'src/common/schema/schema';
-import { updateUsersRequestSchema } from './schema/users.schema';
 
 describe('UsersController', () => {
   let controller: UsersController;

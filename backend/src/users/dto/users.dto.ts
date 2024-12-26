@@ -13,8 +13,17 @@ import {
   updateUsersRequestSchema,
   updateUsersResponseSchema,
 } from '../schema/users.schema';
+import { PaginationOptionsBaseDto } from 'src/common/dtos/page-options.dto';
 
-// export class GetUserRequestDto extends createZodDto(updateUsersParamSchema) {}
+export function PaginationMixin<
+  TBase extends new (...args: any[]) => PaginationOptionsBaseDto,
+>(Base: TBase) {
+  return class extends Base {
+    get skip(): number {
+      return (this.page - 1) * this.take;
+    }
+  };
+}
 
 export class IdDto extends createZodDto(idSchema) {}
 
@@ -24,7 +33,9 @@ export class GetUserResponseDto extends createZodDto(
   getUsersResponseInnerSchema,
 ) {}
 
-export class GetUsersRequestDto extends createZodDto(getUsersRequestSchema) {}
+export class GetUsersRequestDto extends PaginationMixin(
+  createZodDto(getUsersRequestSchema),
+) {}
 
 export class GetUsersResponseDto extends createZodDto(getUsersResponseSchema) {}
 

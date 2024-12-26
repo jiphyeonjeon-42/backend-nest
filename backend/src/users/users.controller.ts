@@ -27,7 +27,6 @@ import {
   IdDto,
   UpdateUsersRequestDto,
 } from './dto/users.dto';
-import { PaginationDto } from 'src/common/dto/dto';
 import { UsersService } from './users.service';
 import {
   createUserResponseSchema,
@@ -35,7 +34,6 @@ import {
   getUsersResponseSchema,
   UserInclude,
 } from './schema/users.schema';
-import { paginate } from 'src/common/utils/paginate.utils';
 import { User } from 'src/entities';
 
 @ApiTags('users')
@@ -471,10 +469,19 @@ export class UsersController {
   })
   async findAll(
     @Query() query: GetUsersRequestDto,
-  ): Promise<PaginationDto<GetUsersResponseDto>> {
+  ): Promise<GetUsersResponseDto> {
     // Fetch user data
     const [users, count] = await this.usersService.findAll(query);
-    return await paginate(users, count, query.page, query.limit);
+    return {
+      items: users,
+      meta: {
+        itemCount: users.length,
+        currentPage: query.page,
+        itemsPerPage: query.take,
+        totalItems: count,
+        totalPages: Math.ceil(count / query.take),
+      },
+    };
   }
 
   // @Get('me')

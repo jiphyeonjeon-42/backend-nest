@@ -1,5 +1,6 @@
 import { extendApi } from '@anatine/zod-openapi';
-import { paginationRequestSchema } from 'src/common/schema/schema';
+import { paginationOptionsSchema } from 'src/common/dtos/page-options.dto';
+import { createPageSchema } from 'src/common/dtos/page.dto';
 import { z } from 'zod';
 
 const getUserSearchSchema = z.object({
@@ -49,7 +50,7 @@ export const getUserRequestSchema = z.object({
 });
 
 export const getUsersRequestSchema = getUserSearchSchema
-  .merge(paginationRequestSchema)
+  .merge(paginationOptionsSchema)
   .merge(getUserRequestSchema);
 
 const user = z.object({
@@ -106,18 +107,9 @@ export const getUsersResponseInnerSchema = z
   })
   .merge(user);
 
-const getUsersResponseMetaSchema = z.object({
-  totalItems: z.coerce.number().int().describe('전체 검색 결과 수'),
-  itemCount: z.coerce.number().int().describe('현재 페이지 검색 결과 수'),
-  itemsPerPage: z.coerce.number().int().describe('페이지 당 검색 결과 수'),
-  totalPages: z.coerce.number().int().describe('전체 결과 페이지 수'),
-  currentPage: z.coerce.number().int().describe('현재 페이지'),
-});
-
-export const getUsersResponseSchema = z
-  .array(getUsersResponseInnerSchema)
-  .default([])
-  .describe('유저 정보 목록');
+export const getUsersResponseSchema = createPageSchema(
+  getUsersResponseInnerSchema,
+);
 
 export const getUsersResponseArraySchema = z.array(getUsersResponseInnerSchema);
 

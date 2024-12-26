@@ -15,13 +15,11 @@ import { In, Like, Repository } from 'typeorm';
 import {
   GetUserResponseDto,
   GetUsersRequestDto,
-  GetUsersResponseDto,
   UpdateUsersRequestDto,
 } from './dto/users.dto';
 import { getUserIncludes } from './users.enums';
 import { isStringInArrayCaseInsensitive } from 'src/common/utils/utils';
 import * as bcrypt from 'bcrypt';
-import { resourceLimits } from 'worker_threads';
 import { UserInclude } from './schema/users.schema';
 
 @Injectable()
@@ -90,14 +88,15 @@ export class UsersService {
   async findAll(
     query: GetUsersRequestDto,
   ): Promise<[GetUserResponseDto[], number]> {
-    const { search, page, limit, include } = query;
+    const { search, order, take, include } = query;
 
     const [users, total] = await this.usersRepository.findAndCount({
       where: search
         ? { nickname: Like(`%${search}%`), email: Like(`%${search}%`) }
         : {},
-      take: limit,
-      skip: (page - 1) * limit,
+      take: take,
+      skip: query.skip,
+      order: { id: order },
     });
 
     const responseDto = users.map((user) => {

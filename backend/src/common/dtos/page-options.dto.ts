@@ -8,7 +8,7 @@ export enum Order {
   DESC = 'DESC',
 }
 export type PaginationOption = z.infer<typeof paginationOptionsSchema>;
-const paginationOptionsSchema = z.object({
+export const paginationOptionsSchema = z.object({
   order: extendApi(z.nativeEnum(Order).optional().default(Order.ASC), {
     description: '정렬 순서 (ASC: 오름차순, DESC: 내림차순)',
     example: Order.ASC,
@@ -22,6 +22,10 @@ const paginationOptionsSchema = z.object({
     example: 10,
   }),
 });
+
+export class PaginationOptionsBaseDto extends createZodDto(
+  paginationOptionsSchema,
+) {}
 
 export class PaginationOptionsDto extends createZodDto(
   paginationOptionsSchema,
