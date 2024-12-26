@@ -21,6 +21,8 @@ import {
 import { getUserIncludes } from './users.enums';
 import { isStringInArrayCaseInsensitive } from 'src/common/utils/utils';
 import * as bcrypt from 'bcrypt';
+import { resourceLimits } from 'worker_threads';
+import { UserInclude } from './schema/users.schema';
 
 @Injectable()
 export class UsersService {
@@ -28,7 +30,7 @@ export class UsersService {
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
     @InjectRepository(VLendingForSearchUser)
-    private readonly vLendingForSearchUser: Repository<VLendingForSearchUser>,
+    private readonly vLendingForSearchUserRepository: Repository<VLendingForSearchUser>,
     @InjectRepository(UserReservation)
     private readonly userReservationRepository: Repository<UserReservation>,
   ) {}
@@ -41,36 +43,53 @@ export class UsersService {
    */
   async findOne(
     id: number,
-    includes: string[] | null | undefined,
+    includes: string[],
   ): Promise<GetUserResponseDto | null> {
-    const userResponseDto: GetUserResponseDto = new GetUserResponseDto();
     const user = await this.usersRepository.findOne({ where: { id } });
     if (!user) return null;
+    const { reservations, lendings, ...rest } = user;
+    if (!includes) return rest;
 
-    Object.assign(userResponseDto, user);
-    if (!includes) return userResponseDto;
-    if (includes.includes('lendings')) {
-      userResponseDto.lendings = await this.userLendingRepository.find({
-        where: { userId: id },
-      });
-      // console.log(userResponseDto.lendings);
+    const [vLendings, vReservations] = await Promise.all([
+      includes.includes('lendings')
+        ? this.vLendingForSearchUserRepository.find({
+            where: { userId: id },
+          })
+        : ([] as VLendingForSearchUser[]),
+      includes.includes('reservations')
+        ? this.userReservationRepository.find({
+            where: { userId: id },
+          })
+        : ([] as UserReservation[]),
+    ]);
+
+    const result: GetUserResponseDto = { ...rest };
+
+    if (includes.includes(UserInclude.LENDINGS)) {
+      const overDueDay = this.getOverDueDay(vLendings);
+      result.lendings = vLendings;
+      result.overDueDay = overDueDay;
     }
-    if (includes.includes('reservations')) {
-      userResponseDto.reservations = await this.userReservationRepository.find({
-        where: { userId: id },
-      });
+
+    if (includes.includes(UserInclude.RESERVATIONS)) {
+      result.reservations = vReservations;
     }
-    //overDueDay
-    userResponseDto.overDueDay = this.getOverDueDay(userResponseDto.lendings);
-    return userResponseDto;
+
+    return result;
   }
 
-  getOverDueDay(lendings: VLendingForSearchUser[] | undefined | null): number {
+  // private async getLendings(userId: number) {
+
+  // }
+
+  private getOverDueDay(lendings: VLendingForSearchUser[]): number {
     if (!lendings) return 0;
     return lendings.reduce((acc, cur) => (acc += cur.overDueDay), 0);
   }
 
-  async findAll(query: GetUsersRequestDto): Promise<[any, number]> {
+  async findAll(
+    query: GetUsersRequestDto,
+  ): Promise<[GetUserResponseDto[], number]> {
     const { search, page, limit, include } = query;
 
     const [users, total] = await this.usersRepository.findAndCount({
@@ -80,55 +99,51 @@ export class UsersService {
       take: limit,
       skip: (page - 1) * limit,
     });
-    const responseDto: GetUserResponseDto[] = [];
-    const userIds = users.map((user) => user.id);
-    users.forEach((user) => {
-      const userDto = new GetUserResponseDto();
-      Object.assign(userDto, user);
-      responseDto.push(userDto);
+
+    const responseDto = users.map((user) => {
+      const { reservations, lendings, ...rest } = user;
+      return rest;
     });
+
     if (!include) {
       return [responseDto, total];
     }
-    if (isStringInArrayCaseInsensitive(getUserIncludes.Lendings, include)) {
-      const lendings = await this.getUserLendings(userIds);
-      const lendingMap = this.mapUserIdItemsToUsers(users, lendings);
-      responseDto.map((userDto) => {
-        userDto.lendings = lendingMap[userDto.id] || []; // Add user's lendings or empty array if none
-        userDto.overDueDay = this.getOverDueDay(userDto.lendings);
-      });
-    }
-    if (isStringInArrayCaseInsensitive(getUserIncludes.Reservations, include)) {
-      const reservations = await this.getUserReservations(userIds);
-      const reservationMap = this.mapUserIdItemsToUsers(users, reservations);
-      responseDto.map((userDto) => {
-        userDto.reservations = reservationMap[userDto.id] || []; // Add user's reservations or empty array if none
-      });
-    }
-    return [responseDto, total];
-  }
 
-  mapUserIdItemsToUsers = <T extends { userId: number }>(
-    users: User[],
-    items: T[],
-  ): Record<number, T[]> => {
-    // Create a mapping of userId to their lendings
-    const itemMap = items.reduce(
-      (acc, item) => {
-        if (!acc[item.userId]) {
-          acc[item.userId] = [];
-        }
-        acc[item.userId].push(item);
-        return acc;
-      },
-      {} as Record<number, any[]>,
+    const userIds = users.map((user) => user.id);
+
+    const [lendings, reservations] = await Promise.all([
+      isStringInArrayCaseInsensitive(getUserIncludes.Lendings, include)
+        ? this.getUserLendings(userIds)
+        : Promise.resolve([]),
+      isStringInArrayCaseInsensitive(getUserIncludes.Reservations, include)
+        ? this.getUserReservations(userIds)
+        : Promise.resolve([]),
+    ]);
+
+    const lendingMap = Map.groupBy(lendings, (lendings) => lendings.userId);
+    const reservationMap = Map.groupBy(
+      reservations,
+      (reservations) => reservations.userId,
     );
 
-    return itemMap;
-  };
+    const updatedResponseDto = responseDto.map((userDto) => {
+      let result: GetUserResponseDto = { ...userDto };
+      const userId = userDto.id;
+      if (lendings.length) {
+        result.lendings = lendingMap.get(userId) || [];
+        result.overDueDay = this.getOverDueDay(result.lendings);
+      }
+      if (reservations.length) {
+        result.reservations = reservationMap.get(userId) || [];
+      }
+      return result;
+    });
+
+    return [updatedResponseDto, total];
+  }
 
   async getUserLendings(userIds: number[]): Promise<VLendingForSearchUser[]> {
-    return await this.userLendingRepository.find({
+    return await this.vLendingForSearchUserRepository.find({
       where: { userId: In(userIds) },
     });
   }
@@ -140,11 +155,16 @@ export class UsersService {
   }
 
   async createUser(email: string, password: string): Promise<User> {
-    const hashedPassword = await bcrypt.hash(String(password), 10);
-    const userList = await this.usersRepository.find({ where: { email } });
-    if (userList.length > 0) {
+    const existingUser = await this.usersRepository.findOne({
+      where: { email },
+    });
+    if (existingUser) {
       throw new BadRequestException('Duplicate email');
     }
+
+    let hashedPassword: string;
+    hashedPassword = await bcrypt.hash(password, 10);
+
     const user = this.usersRepository.create({
       email,
       password: hashedPassword,
@@ -160,7 +180,7 @@ export class UsersService {
     if (!user) {
       throw new BadRequestException('User not found');
     }
-    const updatedUser = Object.assign(user, requestData);
+    const updatedUser = this.usersRepository.merge(user, requestData);
     return await this.usersRepository.save(updatedUser);
   }
 }

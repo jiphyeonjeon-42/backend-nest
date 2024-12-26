@@ -1,10 +1,13 @@
 import { extendApi } from '@anatine/zod-openapi';
 import { paginationRequestSchema } from 'src/common/schema/schema';
-import { zCoercedEnum } from 'src/common/utils/utils';
 import { z } from 'zod';
 
 const getUserSearchSchema = z.object({
   search: z.string().optional().describe('검색할 유저의 nickname or email'),
+});
+
+export const idSchema = z.object({
+  id: z.coerce.number().int().min(0),
 });
 
 export enum UserInclude {
@@ -41,7 +44,7 @@ export const getUserRequestSchema = z.object({
       z.array(z.enum([UserInclude.LENDINGS, UserInclude.RESERVATIONS])),
     )
     .optional()
-    .nullable()
+    .default([])
     .describe('포함할 데이터'),
 });
 

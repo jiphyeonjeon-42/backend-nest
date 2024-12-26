@@ -1,4 +1,3 @@
-import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 
 export const findOneSchema = z.coerce.number().int().min(0);
