@@ -6,6 +6,8 @@ import { HistoriesModule } from './histories/histories.module';
 import { BooksModule } from './books/books.module';
 import { dbConfig } from './config';
 import { UsersModule } from './users/users.module';
+import { ZodValidationPipe } from '@anatine/zod-nestjs';
+import { APP_PIPE } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -15,6 +17,12 @@ import { UsersModule } from './users/users.module';
     BooksModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_PIPE,
+      useClass: ZodValidationPipe,
+    },
+  ],
 })
 export class AppModule {}
