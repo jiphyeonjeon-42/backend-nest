@@ -1,7 +1,7 @@
 import { PaginationDto } from '../dto/dto';
 
 export async function paginate<T>(
-  data: T,
+  items: T,
   total: number,
   page: number,
   limit: number,
@@ -11,15 +11,15 @@ export async function paginate<T>(
   const nextPage = page < totalPages ? page + 1 : null;
   const prevPage = page > 1 ? page - 1 : null;
 
-  const paginationResponse = new PaginationDto<T>();
-  paginationResponse.data = data;
-  paginationResponse.meta = {
-    limit: limit,
-    total: total,
-    current_page: currentPage,
-    total_pages: totalPages,
-    next: nextPage,
-    prev: prevPage,
+  return {
+    items,
+    meta: {
+      limit: limit,
+      total: total,
+      current_page: page,
+      total_pages: totalPages,
+      next: nextPage,
+      prev: prevPage,
+    },
   };
-  return paginationResponse;
 }

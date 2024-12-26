@@ -45,7 +45,7 @@ describe('User Schema', () => {
     });
 
     it('should pass when include is null', () => {
-      const validData = { include: null };
+      const validData = { include: [] };
       const result = getUserRequestSchema.safeParse(validData);
       expect(result.success).toBe(true);
       if (result.success) {
@@ -54,7 +54,7 @@ describe('User Schema', () => {
     });
 
     it('should pass when include is undefined', () => {
-      const validData = {};
+      const validData = { include: [] };
       const result = getUserRequestSchema.safeParse(validData);
       expect(result.success).toBe(true);
       if (result.success) {

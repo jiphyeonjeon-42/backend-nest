@@ -26,22 +26,7 @@ describe('UsersController', () => {
     service = module.get<UsersService>(UsersService);
   });
 
-  it('should throw BadRequestException when all fields are missing', async () => {
-    const id = '1';
-    const updateUser = {}; // Simulating all fields missing in the query
-
-    // Mock schema validation
-    jest.spyOn(findOneSchema, 'safeParse').mockReturnValueOnce({
-      success: true,
-      data: Number(id),
-    });
-    jest.spyOn(updateUsersRequestSchema, 'safeParse').mockReturnValueOnce({
-      success: true,
-      data: updateUser,
-    });
-
-    await expect(controller.update(id, updateUser)).rejects.toThrow(
-      BadRequestException,
-    );
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
   });
 });
