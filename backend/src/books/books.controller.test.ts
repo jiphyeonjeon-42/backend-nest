@@ -3,7 +3,7 @@ import { BooksController } from './books.controller';
 import { BooksService } from './books.service';
 import { Order, PaginationOptionsDto } from 'src/common/dtos/page-options.dto';
 import { BookGetResponseDto } from './dto/books.dto';
-import { Book } from 'src/entities';
+import { Book } from 'src/database/entities';
 import { NotFoundException } from '@nestjs/common';
 import { BookDetailResponseDto } from './dto/books.dto';
 import { BookIDDto } from './dto/books.dto';

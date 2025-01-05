@@ -1,12 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  Lending,
-  Reservation,
-  User,
-  UserReservation,
-  VLendingForSearchUser,
-} from 'src/entities';
+import { Lending, Reservation, User } from 'src/database/entities';
 import { Like, Repository } from 'typeorm';
 import {
   GetUserResponseDto,
@@ -49,10 +43,10 @@ export class UsersService {
     const [vLendings, vReservations] = await Promise.all([
       includes.includes('lendings')
         ? this.findLendingForSearchUser([id])
-        : ([] as VLendingForSearchUser[]),
+        : ([] as LendingsForSearchUserDto[]),
       includes.includes('reservations')
         ? this.findActiveReservations([id])
-        : ([] as UserReservation[]),
+        : ([] as UserReservationsDto[]),
     ]);
 
     const result: GetUserResponseDto = { ...rest };
@@ -74,7 +68,7 @@ export class UsersService {
 
   // }
 
-  private getOverDueDay(lendings: VLendingForSearchUser[]): number {
+  private getOverDueDay(lendings: LendingsForSearchUserDto[]): number {
     if (!lendings) return 0;
     return lendings.reduce((acc, cur) => (acc += cur.overDueDay), 0);
   }
@@ -135,7 +129,7 @@ export class UsersService {
     return [updatedResponseDto, total];
   }
 
-  async getUserReservations(userIds: number[]): Promise<UserReservation[]> {
+  async getUserReservations(userIds: number[]): Promise<UserReservationsDto[]> {
     // return await this.userReservationRepository.find({
     //   where: { userId: In(userIds) },
     // });

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { VHistories } from 'src/database/entities';
+import { VHistories } from 'src/database/legacy_view/VHistories';
 import { Repository } from 'typeorm';
 
 @Injectable()

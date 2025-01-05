@@ -1,7 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { UsersService } from './users.service';
-import { User, VLendingForSearchUser, UserReservation } from 'src/entities';
+import {
+  User,
+  VLendingForSearchUser,
+  UserReservation,
+} from 'src/database/entities';
 import { Repository } from 'typeorm';
 import { UserInclude } from './schema/users.schema';
 import { BadRequestException } from '@nestjs/common';
