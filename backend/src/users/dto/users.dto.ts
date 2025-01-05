@@ -9,9 +9,11 @@ import {
   getUsersResponseInnerSchema,
   getUsersResponseSchema,
   idSchema,
+  lendingsForSearchUser,
   myUpdateUsersRequestSchema,
   updateUsersRequestSchema,
   updateUsersResponseSchema,
+  userReservations,
 } from '../schema/users.schema';
 import { PaginationOptionsBaseDto } from 'src/common/dtos/page-options.dto';
 
@@ -65,4 +67,10 @@ export class CreateUserResponseDto extends createZodDto(
 
 export class CreateUserRequestDto extends createZodDto(
   createUserRequestSchema,
+) {}
+
+export class UserReservationsDto extends createZodDto(userReservations) {}
+
+export class LendingsForSearchUserDto extends createZodDto(
+  lendingsForSearchUser,
 ) {}

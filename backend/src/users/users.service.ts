@@ -1,21 +1,19 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-  Search,
-} from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
+  Lending,
+  Reservation,
   User,
   UserReservation,
-  VLending,
   VLendingForSearchUser,
 } from 'src/entities';
-import { In, Like, Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import {
   GetUserResponseDto,
   GetUsersRequestDto,
+  LendingsForSearchUserDto,
   UpdateUsersRequestDto,
+  UserReservationsDto,
 } from './dto/users.dto';
 import { getUserIncludes } from './users.enums';
 import { isStringInArrayCaseInsensitive } from 'src/common/utils/utils';
@@ -27,10 +25,10 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
-    @InjectRepository(VLendingForSearchUser)
-    private readonly vLendingForSearchUserRepository: Repository<VLendingForSearchUser>,
-    @InjectRepository(UserReservation)
-    private readonly userReservationRepository: Repository<UserReservation>,
+    @InjectRepository(Lending)
+    private readonly lendingRepository: Repository<Lending>,
+    @InjectRepository(Reservation)
+    private readonly reservationRepository: Repository<Reservation>,
   ) {}
 
   /**
@@ -50,14 +48,10 @@ export class UsersService {
 
     const [vLendings, vReservations] = await Promise.all([
       includes.includes('lendings')
-        ? this.vLendingForSearchUserRepository.find({
-            where: { userId: id },
-          })
+        ? this.findLendingForSearchUser([id])
         : ([] as VLendingForSearchUser[]),
       includes.includes('reservations')
-        ? this.userReservationRepository.find({
-            where: { userId: id },
-          })
+        ? this.findActiveReservations([id])
         : ([] as UserReservation[]),
     ]);
 
@@ -112,7 +106,7 @@ export class UsersService {
 
     const [lendings, reservations] = await Promise.all([
       isStringInArrayCaseInsensitive(getUserIncludes.Lendings, include)
-        ? this.getUserLendings(userIds)
+        ? this.findLendingForSearchUser(userIds)
         : Promise.resolve([]),
       isStringInArrayCaseInsensitive(getUserIncludes.Reservations, include)
         ? this.getUserReservations(userIds)
@@ -141,16 +135,11 @@ export class UsersService {
     return [updatedResponseDto, total];
   }
 
-  async getUserLendings(userIds: number[]): Promise<VLendingForSearchUser[]> {
-    return await this.vLendingForSearchUserRepository.find({
-      where: { userId: In(userIds) },
-    });
-  }
-
   async getUserReservations(userIds: number[]): Promise<UserReservation[]> {
-    return await this.userReservationRepository.find({
-      where: { userId: In(userIds) },
-    });
+    // return await this.userReservationRepository.find({
+    //   where: { userId: In(userIds) },
+    // });
+    return await this.findActiveReservations(userIds);
   }
 
   async createUser(email: string, password: string): Promise<User> {
@@ -181,5 +170,85 @@ export class UsersService {
     }
     const updatedUser = this.usersRepository.merge(user, requestData);
     return await this.usersRepository.save(updatedUser);
+  }
+
+  async findLendingForSearchUser(userIds: number[]) {
+    const lendings = await this.findActiveLendings(userIds);
+
+    const results = await Promise.all(
+      lendings.map(async (lending) => {
+        const currentDate = new Date();
+        const dueDate = new Date(lending.duedate);
+        const overDueDay =
+          currentDate > dueDate
+            ? Math.floor(
+                (currentDate.getTime() - dueDate.getTime()) /
+                  (1000 * 60 * 60 * 24),
+              )
+            : 0;
+
+        const reservedNum = await this.reservationRepository.count({
+          where: { bookInfoId: lending.bookInfoId, status: 0 },
+        });
+
+        return {
+          ...lending,
+          overDueDay,
+          reservedNum,
+        };
+      }),
+    );
+
+    return results;
+  }
+
+  async findActiveLendings(
+    userIds: number[],
+  ): Promise<LendingsForSearchUserDto[]> {
+    return this.lendingRepository
+      .createQueryBuilder('l')
+      .select('u.id', 'userId')
+      .addSelect('bi.id', 'bookInfoId')
+      .addSelect('l.createdAt', 'lendDate')
+      .addSelect('l.lendingCondition', 'lendingCondition')
+      .addSelect('bi.image', 'image')
+      .addSelect('bi.author', 'author')
+      .addSelect('bi.title', 'title')
+      .addSelect('DATE_ADD(l.createdAt, INTERVAL 14 DAY)', 'duedate')
+      .innerJoin('user', 'u', 'l.userId = u.id')
+      .leftJoin('book', 'b', 'l.bookId = b.id')
+      .leftJoin('book_info', 'bi', 'b.infoid = bi.id')
+      .where('l.returnedAt IS NULL')
+      .where('u.id IN (:...userIds)', { userIds })
+      .getRawMany();
+  }
+
+  async findActiveReservations(
+    userIds: number[],
+  ): Promise<UserReservationsDto[]> {
+    const reservations = await this.reservationRepository
+      .createQueryBuilder('r')
+      .select('r.id', 'reservationId')
+      .addSelect('r.bookInfoId', 'reservedBookInfoId')
+      .addSelect('r.createdAt', 'reservationDate')
+      .addSelect('r.endAt', 'endAt')
+      .addSelect('bi.title', 'title')
+      .addSelect('bi.author', 'author')
+      .addSelect('bi.image', 'image')
+      .addSelect('r.userId', 'userId')
+      .leftJoin('book_info', 'bi', 'r.bookInfoId = bi.id')
+      .where('r.status = 0')
+      .andWhere('r.userId IN (:...userIds)', { userIds })
+      .getRawMany();
+
+    // Perform ranking calculation manually in JavaScript
+    return reservations.map((reservation) => {
+      const ranking = reservations.filter(
+        (r) =>
+          r.bookInfoId === reservation.bookInfoId &&
+          r.createdAt <= reservation.createdAt,
+      ).length;
+      return { ...reservation, ranking };
+    });
   }
 }

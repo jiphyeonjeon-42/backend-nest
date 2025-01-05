@@ -68,7 +68,7 @@ const user = z.object({
   role: z.coerce.number().int().describe('권한'),
 });
 
-const VlendingForSearchUser = z.object({
+export const lendingsForSearchUser = z.object({
   userId: z.coerce.number().int(),
   bookInfoId: z.coerce.number().int(),
   lendDate: z.coerce.date(),
@@ -81,7 +81,7 @@ const VlendingForSearchUser = z.object({
   reservedNum: z.coerce.number().min(0),
 });
 
-const VUserReservations = z.object({
+export const userReservations = z.object({
   reservationId: z.coerce.number().min(0),
   reservedBookInfoId: z.coerce.number().min(0),
   reservationDate: z.coerce.date(),
@@ -97,11 +97,11 @@ export const getUsersResponseInnerSchema = z
   .object({
     overDueDay: z.coerce.number().int().optional().describe('현재 연체된 날수'),
     reservations: z
-      .array(VUserReservations)
+      .array(userReservations)
       .optional()
       .describe('해당 유저의 예약 정보'),
     lendings: z
-      .array(VlendingForSearchUser)
+      .array(lendingsForSearchUser)
       .optional()
       .describe('해당 유저의 대출 정보'),
   })
@@ -152,13 +152,13 @@ export const getMyUserInfoResponseSchema = z.object({
     example: 0,
   }),
   reservations: extendApi(
-    z.array(VUserReservations).describe('해당 유저의 예약 정보'),
+    z.array(userReservations).describe('해당 유저의 예약 정보'),
     {
       example: [],
     },
   ),
   lendings: extendApi(
-    z.array(VlendingForSearchUser).describe('해당 유저의 대출 정보'),
+    z.array(lendingsForSearchUser).describe('해당 유저의 대출 정보'),
     {
       example: [],
     },
